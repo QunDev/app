@@ -1,0 +1,97 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ApiKey {
+  id          Int          @id @default(autoincrement()) // Unique identifier for the API key
+  key         String       @unique // The actual API key (can be hashed for security if needed)
+  userId      Int? // Optional: Link to a user if this key belongs to a user
+  user        User?        @relation(fields: [userId], references: [id])
+  serviceName String? // Optional: Service name or description (if the key applies to a specific service)
+  status      ApiKeyStatus @default(ACTIVE) // Status of the key (Active, Revoked, Expired)
+  createdAt   DateTime     @default(now()) // Time when the key was created
+  updatedAt   DateTime     @updatedAt // Auto-updated whenever the key is modified
+  expiresAt   DateTime? // Optional: Expiration date of the key
+  rateLimit   Int? // Optional: Rate limit for this API key (requests per period)
+  usageCount  Int          @default(0) // Tracks how many times this key has been used
+  lastUsedAt  DateTime? // Timestamp of the last usage of this key (optional)
+
+  @@index([key]) // Create an index for fast lookup of keys
+}
+
+// Optional Enum for `status`
+enum ApiKeyStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique // The cryptographically hashed refresh token
+  userId    Int // Associated user ID
+  user      User     @relation(fields: [userId], references: [id]) // Relation with User
+  createdAt DateTime @default(now()) // When the refresh token was created
+  expiresAt DateTime // Expiration date of the token
+  revoked   Boolean  @default(false) // Whether the token is revoked
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String // Password (hashed securely via bcrypt)
+  refreshTokens RefreshToken[] // Relation with RefreshToken
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  ApiKey       ApiKey[]
+  App          App[]
+  CountryPhone CountryPhone[]
+  Phone        Phone[]
+}
+
+model App {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  Phone     Phone[]
+}
+
+model Phone {
+  id             Int           @id @default(autoincrement())
+  number         String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  App            App           @relation(fields: [appId], references: [id])
+  appId          Int
+  CountryPhone   CountryPhone? @relation(fields: [countryPhoneId], references: [id])
+  countryPhoneId Int?
+  User           User?         @relation(fields: [userId], references: [id])
+  userId         Int?
+}
+
+model CountryPhone {
+  id         Int      @id @default(autoincrement())
+  country    String
+  numberCode String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Phone      Phone[]
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+}

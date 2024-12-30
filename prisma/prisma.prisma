@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for API Key Status
+enum ApiKeyStatus {
+  ACTIVE // Key vẫn còn hiệu lực
+  REVOKED // Key bị hủy và không thể sử dụng
+  EXPIRED // Key đã hết hạn
+}
+
+// User Table
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String // Password (hashed securely via bcrypt)
+
+  refreshTokens RefreshToken[] // Relations with RefreshToken
+  apiKeys       ApiKey[] // Relations with ApiKey
+  apps          App[] // Relations with App
+  phones        Phone[] // Relations with Phone
+  countryPhones CountryPhone[] // Relations with CountryPhone (if user has custom management capability)
+  roles         UserRole[] // Relation with UserRole
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique // Role name (e.g., Admin, User)
+  description String? // Optional: Description for the role
+  users       UserRole[] // Relation with users through UserRole
+  permissions RolePermission[] // Relation with permissions through RolePermission
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id          Int              @id @default(autoincrement())
+  action      String // Action name (e.g., read, write, update, delete)
+  resource    String // Resource name (e.g., users, posts, etc.)
+  description String? // Optional: Description of the permission
+  roles       RolePermission[] // Relation with roles through RolePermission
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([action, resource]) // Unique constraint to avoid duplicate permission
+}
+
+// Junction table: User-Role (Many-to-Many)
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  userId Int // Foreign key to User
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleId Int // Foreign key to Role
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) // Date when role was assigned to user
+
+  @@unique([userId, roleId]) // Ensure no duplicate role assignment
+}
+
+// Junction table: Role-Permission (Many-to-Many)
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int // Foreign key to Role
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId Int // Foreign key to Permission
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) // Date when permission was assigned to role
+
+  @@unique([roleId, permissionId]) // Ensure no duplicate permission assignment
+}
+
+// ApiKey Table
+model ApiKey {
+  id          Int          @id @default(autoincrement()) // Unique identifier for the API key
+  key         String       @unique // The API key value
+  userId      Int? // Optional: Link to a user if the key belongs to a specific user
+  appId       Int? // Optional: Link to an App if the key belongs to an application
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  app         App?         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  status      ApiKeyStatus @default(ACTIVE) // Enum for status (ACTIVE, REVOKED, EXPIRED)
+  description String? // Optional description for this key (useful for support/debugging)
+
+  createdAt DateTime  @default(now()) // Timestamp when the key was created
+  updatedAt DateTime  @updatedAt // Automatically updated when the key is modified
+  expiresAt DateTime? // Optional expiration date - null means "never expire"
+
+  @@index([key]) // Index for quick header lookup
+}
+
+// RefreshToken Table
+model RefreshToken {
+  id        Int      @id @default(autoincrement()) // Token ID
+  token     String   @unique // Token value
+  userId    Int // Foreign key for User
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) // Created time
+  expiresAt DateTime // Expiry time
+  revoked   Boolean  @default(false) // Revoked status
+}
+
+// App Table
+model App {
+  id        Int      @id @default(autoincrement())
+  name      String // App name
+  createdAt DateTime @default(now()) // Created time
+  updatedAt DateTime @updatedAt // Updated time
+
+  userId Int // Foreign key to User
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phones Phone[] // Relation with Phone for app-specific numbers
+  ApiKey ApiKey[]
+}
+
+// Phone Table
+model Phone {
+  id        Int      @id @default(autoincrement())
+  number    String   @unique // Phone number
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  appId Int? // Optional: Foreign key to App
+  app   App? @relation(fields: [appId], references: [id], onDelete: SetNull)
+
+  countryPhoneId Int // Foreign key to CountryPhone
+  countryPhone   CountryPhone @relation(fields: [countryPhoneId], references: [id], onDelete: Cascade)
+
+  userId Int? // Relation to User for ownership
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// CountryPhone Table
+model CountryPhone {
+  id         Int      @id @default(autoincrement())
+  country    String // Country name
+  numberCode String // Country code
+  createdAt  DateTime @default(now()) // Created time
+  updatedAt  DateTime @updatedAt // Updated time
+
+  phones Phone[] // Relation with Phone
+  userId Int? // Optional: User if managed by specific user
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
