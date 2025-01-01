@@ -2,26 +2,25 @@ import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
-import {ErrorResponse, NotFoundError} from "~/core/error.response.ts";
+import { ErrorResponse, NotFoundError } from "~/core/error.response.ts";
 import routerIndex from "~/routers";
-import {errorHandler} from "~/helper/errorHandle.ts";
+import { asyncHandler, errorHandler } from "~/helper/errorHandle.ts";
+import {handleFile} from "~/middlewares/handleFile.ts";
 
 const app = express();
 
 // Init Middleware
-
-// app.use(morgan("combined"));
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-
-// Init DB
+// Middleware to handle multipart/form-data
+app.use(handleFile);
 
 // Init Routes
-app.use("/api/v1", routerIndex);
+app.use("/api/v1", asyncHandler(routerIndex));
 
 // Error Handler
 app.use(errorHandler);

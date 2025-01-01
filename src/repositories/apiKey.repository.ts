@@ -1,39 +1,21 @@
-import {prisma} from '~/utils/prismaClient';
+import { prisma } from "~/utils/prismaClient.ts";
+import { ApiKey } from "@prisma/client";
 
-export class ApiKeyRepository {
-  /**
-   * Saves a new API key entry in the database.
-   * @param apiKeyData - Object containing data to save in the database.
-   * @returns The newly created API key record.
-   */
-  static async createApiKey(apiKeyData: {
-    key: string;
-    serviceName: string | null;
-    userId: number | null;
-    rateLimit: number | null;
-    expiresAt: Date | null;
-    status: 'ACTIVE';
-  }) {
-      return prisma.apiKey.create({
-        data: apiKeyData,
-      });
-  }
+export const createApiKey = async (data: { key: string; description?: string; userId?: number; appId?: number }): Promise<ApiKey> => {
+  return prisma.apiKey.create({
+    data,
+  });
+};
 
-  public static getApiKeyByKey(key: string) {
-    return prisma.apiKey.findUnique({
-      where: {key: key},
-    });
-  }
+export const getApiKeyByKey = async (key: string): Promise<ApiKey | null> => {
+  return prisma.apiKey.findUnique({
+    where: { key },
+  });
+};
 
-  public static updateUsageCountApiKeyById(id: number) {
-    return prisma.apiKey.update({
-      where: {id: id},
-      data: {
-        usageCount: {
-          increment: 1, // Increment the usage count by 1
-        },
-        lastUsedAt: new Date(), // Update the last used timestamp
-      },
-    });
-  }
-}
+export const revokeApiKey = async (key: string): Promise<ApiKey> => {
+  return prisma.apiKey.update({
+    where: { key },
+    data: { status: "REVOKED" },
+  });
+};

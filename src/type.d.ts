@@ -1,9 +1,24 @@
-import { ApiKey } from '@prisma/client';
+import { User } from '~/models/user.model';
 
 declare global {
   namespace Express {
     export interface Request {
-      apiKeyRecord?: ApiKey;
+      user?: User;
+
     }
+  }
+}
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    raw?: {
+      files?: {
+        file?: {
+          filename: string;
+          file: NodeJS.ReadableStream;
+          size: number;
+        };
+      };
+    };
   }
 }

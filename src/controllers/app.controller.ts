@@ -1,22 +1,29 @@
-import {NextFunction, Request, Response} from "express";
-import AppService from "~/services/app.service.ts";
-import {CREATED} from "~/core/success.reponse.ts";
-import {getInfoData} from "~/utils";
+import { Request, Response, NextFunction } from 'express';
+import * as appService from '~/services/app.service.ts';
+import { OK, CREATED } from '~/core/success.response.ts';
+import { asyncHandler } from '~/helper/errorHandle.ts';
 
-class AppController {
-  static async create(req: Request, res: Response, next: NextFunction) {
-    const {name} = req.body;
+export const getApps = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const apps = await appService.getAllApps();
+  new OK({ message: 'Apps retrieved successfully', metadata: apps }).send(res);
+});
 
-    const userId = req.apiKeyRecord?.userId as number;
+export const getApp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const app = await appService.getApp(Number(req.params.id));
+  new OK({ message: 'App retrieved successfully', metadata: app }).send(res);
+});
 
-    const app = await AppService.createApp(name, userId);
+export const createApp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const newApp = await appService.createNewApp(req.body);
+  new CREATED({ message: 'App created successfully', metadata: newApp }).send(res);
+});
 
-    new CREATED({
-      message: "App created successfully",
-      metadata:
-        getInfoData({fileds: ['name', 'createdAt'], object: app})
-    }).send(res);
-  }
-}
+export const updateApp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const updatedApp = await appService.updateExistingApp(Number(req.params.id), req.body);
+  new OK({ message: 'App updated successfully', metadata: updatedApp }).send(res);
+});
 
-export default AppController;
+export const deleteApp = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  await appService.removeApp(Number(req.params.id));
+  new OK({ message: 'App deleted successfully' }).send(res);
+});

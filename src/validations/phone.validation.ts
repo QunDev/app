@@ -1,14 +1,15 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 export const createPhoneSchema = z.object({
-  phoneRecords: z.array(z.string())
-    .nonempty()
-    .min(1, 'You must provide at least one phone number.')
-    .max(100_000, 'You can only add up to 100,000 records at once.'),
-  appId: z.number()
-    .int('App ID must be an integer.')
-    .positive('App ID must be a positive integer.'),
-  countryId: z.number()
-    .int('Country ID must be an integer.')
-    .positive('Country ID must be a positive integer.'),
+  numbers: z.array(z.string().min(1, 'Phone number is required')),
+  appId: z.number().int().positive('App ID must be a positive integer').optional(),
+  countryPhoneId: z.number().int().positive('Country Phone ID must be a positive integer'),
+  userId: z.number().int().positive('User ID must be a positive integer'),
+});
+
+export const updatePhoneSchema = z.object({
+  number: z.string().min(1, 'Phone number is required').optional(),
+  appId: z.number().int().positive('App ID must be a positive integer').optional(),
+  countryPhoneId: z.number().int().positive('Country Phone ID must be a positive integer').optional(),
+  userId: z.number().int().positive('User ID must be a positive integer').optional(),
 });

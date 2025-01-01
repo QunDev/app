@@ -1,32 +1,27 @@
-import {prisma} from "~/utils/prismaClient.ts";
+import { PrismaClient } from '@prisma/client';
 
-class AppRepository {
-  static async create(data: {
-    name: string;
-    userId: number;
-  }) {
-    return prisma.app.create({
-      data
-    });
-  }
+const prisma = new PrismaClient();
 
-  static async findByNameAndUserId(name: string, userId: number) {
-    return prisma.app.findFirst({
-      where: {
-        name,
-        userId,
-      },
-    });
-  }
+export const getApps = async () => {
+  return prisma.app.findMany();
+};
 
-  static async findByIdAndUserId(id: number, userId: number) {
-    return prisma.app.findUnique({
-      where: {
-        id,
-        userId
-      }
-    });
-  }
+export const getAppById = async (id: number) => {
+  return prisma.app.findUnique({ where: { id } });
+};
+
+export const getAppByName = async (name: string) => {
+  return prisma.app.findFirst({ where: { name } });
 }
 
-export default AppRepository;
+export const createApp = async (data: any) => {
+  return prisma.app.create({ data });
+};
+
+export const updateApp = async (id: number, data: any) => {
+  return prisma.app.update({ where: { id }, data });
+};
+
+export const deleteApp = async (id: number) => {
+  return prisma.app.delete({ where: { id } });
+};

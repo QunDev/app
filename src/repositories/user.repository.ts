@@ -1,30 +1,14 @@
-import {prisma} from "~/utils/prismaClient.ts";
+import { prisma } from "~/utils/prismaClient.ts";
+import { User } from "@prisma/client";
 
-class UserRepository {
-    /**
-     * Finds a user by their email
-     * @param email - Email of the user
-     */
-    static async findUserByEmail(email: string) {
-        return prisma.user.findUnique({
-                where: {email},
-            }
-        );
-    }
+export const createUser = async (data: { name: string; email: string; password: string }): Promise<User> => {
+  return prisma.user.create({
+    data,
+  });
+};
 
-    /**
-     * Creates a new user
-     * @param userData - Object containing user data
-     */
-    static async createUser(userData: {
-        name: string;
-        email: string;
-        password: string;
-    }) {
-        return prisma.user.create({
-            data: userData,
-        });
-    }
-}
-
-export default UserRepository;
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  return prisma.user.findUnique({
+    where: { email },
+  });
+};

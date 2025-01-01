@@ -3,6 +3,7 @@ import statusCodes from "~/utils/statusCodes";
 
 export class ErrorResponse extends Error {
   status: number;
+
   constructor(message: string, status: number) {
     super(message);
     this.status = status;
@@ -57,6 +58,16 @@ export class ValidationError extends ErrorResponse {
 
 export class InternalServerError extends ErrorResponse {
   constructor(message: string = reasonPhrases.INTERNAL_SERVER_ERROR, statuscode: number = statusCodes.INTERNAL_SERVER_ERROR) {
+    super(message, statuscode);
+  }
+}
+
+/**
+ * Lỗi khi dữ liệu không hợp lệ
+ * Ví dụ: Dữ liệu không đúng định dạng, thiếu trường bắt buộc, ...
+ */
+export class UnprocessableEntity extends ErrorResponse {
+  constructor(message: string = reasonPhrases.UNPROCESSABLE_ENTITY, statuscode: number = statusCodes.UNPROCESSABLE_ENTITY) {
     super(message, statuscode);
   }
 }

@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `phone` ADD COLUMN `userId` INTEGER NULL;
-
--- AddForeignKey
-ALTER TABLE `Phone` ADD CONSTRAINT `Phone_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;

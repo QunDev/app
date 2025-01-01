@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum ApiKeyStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String @unique
+  password String
+
+  refreshTokens RefreshToken[]
+  apiKeys       ApiKey[]
+  apps          App[]
+  phones        Phone[]
+  countryPhones CountryPhone[]
+  roles         UserRole[]
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  createdBy  Int?
+  updatedBy  Int?
+  Backup     Backup[]
+  accountApp accountApp[]
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  description String?
+  users       UserRole[]
+  permissions RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+}
+
+model Permission {
+  id          Int              @id @default(autoincrement())
+  action      String
+  resource    String
+  description String?
+  roles       RolePermission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+
+  @@unique([action, resource])
+}
+
+model UserRole {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([roleId, permissionId])
+}
+
+model ApiKey {
+  id          Int          @id @default(autoincrement())
+  key         String       @unique
+  userId      Int?
+  appId       Int?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  app         App?         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  status      ApiKeyStatus @default(ACTIVE)
+  description String?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  expiresAt    DateTime?
+  accountAppId Int?
+
+  @@index([key])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+}
+
+model App {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  filepath  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId     Int
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phones     Phone[]
+  apiKeys    ApiKey[]
+  backups    Backup[]
+  accountApp accountApp[]
+}
+
+model Phone {
+  id        Int      @id @default(autoincrement())
+  number    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  appId Int?
+  app   App? @relation(fields: [appId], references: [id], onDelete: SetNull)
+
+  countryPhoneId Int
+  countryPhone   CountryPhone @relation(fields: [countryPhoneId], references: [id], onDelete: Cascade)
+
+  userId       Int
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountAppId Int?
+}
+
+model CountryPhone {
+  id         Int      @id @default(autoincrement())
+  country    String
+  numberCode String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  phones Phone[]
+  userId Int?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Backup {
+  id           Int         @id @default(autoincrement())
+  filename     String
+  filepath     String
+  filesize     Int
+  appId        Int
+  app          App         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  description  String?
+  userId       Int
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountApp   accountApp? @relation(fields: [accountAppId], references: [id])
+  accountAppId Int?
+}
+
+model accountApp {
+  id        Int      @id @default(autoincrement())
+  firstname String?
+  lastname  String?
+  address   String?
+  zipcode   String?
+  email     String?
+  password  String?
+  phone     String?
+  sms       String?  @db.LongText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appId   Int
+  app     App      @relation(fields: [appId], references: [id], onDelete: Cascade)
+  backups Backup[]
+}

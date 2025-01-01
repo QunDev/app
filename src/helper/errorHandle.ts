@@ -1,3 +1,4 @@
+import {PrismaClientInitializationError} from "@prisma/client/runtime/library";
 import {Request, Response, NextFunction} from "express";
 import {ErrorResponse, ValidationError} from "~/core/error.response.ts";
 import statusCodes from "~/utils/statusCodes.ts";
@@ -18,6 +19,15 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
       success: false,
       message: err.message,
       ...(err instanceof ValidationError && {errors: err.errors}), // Include errors if ValidationError
+    });
+    return;
+  }
+
+  // Handle PrismaClientKnownRequestError
+  if (err instanceof PrismaClientInitializationError) {
+    res.status(500).json({
+      message: 'Database connection error. Please make sure your database server is running.',
+      error: err.message,
     });
     return;
   }
