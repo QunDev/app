@@ -46,7 +46,7 @@ export class AppController {
   }
 
   async createApp(req: Request, res: Response) {
-    const {name, userId} = createAppSchema.parse(req.body)
+    const {name} = createAppSchema.parse(req.body)
 
     const uploadsDir = join(__dirname, '..', 'uploads', 'apks', name)
 
@@ -88,7 +88,7 @@ export class AppController {
 
     const app = await appService.createApp({
       name,
-      userId: Number(userId),
+      userId: req.user.userId,
       filepath
     })
 
@@ -110,7 +110,7 @@ export class AppController {
       throw new BadRequest('App not found')
     }
 
-    const {name, userId} = updateAppSchema.parse(req.body)
+    const {name} = updateAppSchema.parse(req.body)
 
     const file = req.raw?.files?.file
 
@@ -159,7 +159,7 @@ export class AppController {
     }
     const updatedApp = await appService.updateApp(id, {
       name: name ? name : app.name,
-      userId: Number(userId) ? Number(userId) : app.userId,
+      userId: req.user.userId ? req.user.userId : app.userId,
       filepath: filepath ? filepath : app.filepath
     })
 

@@ -4,7 +4,7 @@ import { userWithRoole } from '~/types/auth.type.ts'
 declare global {
   namespace Express {
     interface Request {
-      user?: userWithRoole
+      user: userWithRoole
     }
   }
 }

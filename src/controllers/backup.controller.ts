@@ -36,7 +36,7 @@ export class BackupController {
   }
 
   async createBackup(req: Request, res: Response, next: NextFunction) {
-    const {appId, description, userId} = createBackupSchema.parse(req.body)
+    const {appId, description} = createBackupSchema.parse(req.body)
     const app = await appService.getApp(Number(appId))
 
     if (!app) {
@@ -90,7 +90,7 @@ export class BackupController {
       filesize: file.size,
       appId: Number(appId),
       description,
-      userId: Number(userId)
+      userId: req.user.userId
     })
 
     new CREATED({message: 'Backup created successfully', metadata: newBackup}).send(res)

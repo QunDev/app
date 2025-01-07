@@ -9,7 +9,6 @@ export const createAccountAppSchema = z.object({
   password: z.string().min(8).optional(),
   phone: z.string().optional(),
   sms: z.string().optional(),
-  userId: z.number(),
   appId: z.number()
 })
 

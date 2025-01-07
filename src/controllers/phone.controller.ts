@@ -27,8 +27,8 @@ export class PhoneController {
   }
 
   async createPhones(req: Request, res: Response, next: NextFunction) {
-    const { numbers, countryPhoneId, userId } = createPhoneSchema.parse(req.body)
-    const newPhones = await phoneService.createPhones(numbers, countryPhoneId, userId)
+    const { numbers, countryPhoneId } = createPhoneSchema.parse(req.body)
+    const newPhones = await phoneService.createPhones(numbers, countryPhoneId, req.user.userId)
     new CREATED({ message: 'Phones created successfully', metadata: newPhones }).send(res)
   }
 
@@ -47,7 +47,7 @@ export class PhoneController {
       throw new UnprocessableEntity('At least one field is required')
     }
 
-    const updatedPhone = await phoneService.updatePhone(id, data)
+    const updatedPhone = await phoneService.updatePhone(id, {userId: req.user.userId, ...data})
     new OK({ message: 'Phone updated successfully', metadata: updatedPhone }).send(res)
   }
 

@@ -28,15 +28,11 @@ export class AccountAppController {
   async createAccountApp(req: Request, res: Response) {
     const data = createAccountAppSchema.parse(req.body)
 
-    const user = await userService.getUserDetails(data.userId)
-
-    if (!user) throw new BadRequest('User not found')
-
     const app = await appService.getApp(data.appId)
 
     if (!app) throw new BadRequest('App not found')
 
-    const accountApp = await accountAppService.createAccountApp(data)
+    const accountApp = await accountAppService.createAccountApp({userId: req.user.userId, ...data})
 
     new CREATED({message: 'AccountApp created successfully', metadata: accountApp}).send(res)
   }

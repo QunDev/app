@@ -52,7 +52,10 @@ export class UserRoleController {
   async createUserRole(req: Request, res: Response) {
     const data = createUserRoleSchema.parse(req.body)
 
-    const userRole = await userRoleService.createMultipleUserRoles(data)
+    const userRole = await userRoleService.createMultipleUserRoles({
+      ...data,
+      userId: req.user.id
+    })
 
     new CREATED({
       message: 'Create userRole successfully',
@@ -63,7 +66,10 @@ export class UserRoleController {
   async updateUserRole(req: Request, res: Response) {
     const data = updateUserRolesInputSchema.parse(req.body)
 
-    const updatedPermissions = await userRoleService.updateUserRoles(data)
+    const updatedPermissions = await userRoleService.updateUserRoles({
+      ...data,
+      userId: req.user.id
+    })
 
     new OK({
       message: 'Update userRole successfully',

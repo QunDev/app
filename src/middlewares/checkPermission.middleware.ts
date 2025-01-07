@@ -44,7 +44,6 @@ export function checkPermission(...requiredPermissions: string[]) {
         }
       }
     })
-
     if (!userWithRoles) {
       // User không tồn tại
       throw new UNAUTHORIZED('Unauthorized: User does not exist')
@@ -75,7 +74,6 @@ export function checkPermission(...requiredPermissions: string[]) {
       // Chưa đủ quyền
       throw new UNAUTHORIZED(`Unauthorized: Missing permissions: ${missing.join(', ')}`)
     }
-
     // 5) Nếu đủ quyền => next()
     return next()
   })
