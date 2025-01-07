@@ -1,38 +1,33 @@
-import {PrismaClient} from '@prisma/client';
+import {Backup, PrismaClient} from '@prisma/client'
 
-const prisma = new PrismaClient();
+export class BackupRepository {
+  private readonly prisma: PrismaClient
 
-export const getBackups = async () => {
-  return prisma.backup.findMany();
-};
+  constructor(prisma: PrismaClient) {
+    this.prisma = new PrismaClient()
+  }
 
-export const getBackupById = async (id: number) => {
-  return prisma.backup.findUnique({where: {id}});
-};
+  async getBackups() {
+    return this.prisma.backup.findMany()
+  }
 
-export const createBackup = async ({filename, filepath, filesize, appId, description, userId}: {
-  filename: string; filepath: string; filesize: number; appId: number; description?: string; userId: number;
-}) => {
-  return prisma.backup.create({
-    data: {
-      filename,
-      filepath,
-      filesize,
-      appId,
-      description,
-      userId,
-    }
-  });
-};
+  async getBackupById(id: number) {
+    return this.prisma.backup.findUnique({ where: { id } })
+  }
 
-export const updateBackup = async (id: number, data: any) => {
-  return prisma.backup.update({where: {id}, data});
-};
+  async createBackup(data: Pick<Backup, 'userId' | 'appId' | 'description' | 'filename' | 'filepath' | 'filesize'>) {
+    return this.prisma.backup.create({ data })
+  }
 
-export const deleteBackup = async (id: number) => {
-  return prisma.backup.delete({where: {id}});
-};
+  async updateBackup(id: number, data: any) {
+    return this.prisma.backup.update({ where: { id }, data })
+  }
 
-export const getBackupByFilename = async (filename: string) => {
-  return prisma.backup.findFirst({ where: { filename } });
-};
+  async deleteBackup(id: number) {
+    return this.prisma.backup.delete({ where: { id } })
+  }
+
+  async getBackupByFilename(filename: string) {
+    return this.prisma.backup.findFirst({ where: { filename } })
+  }
+}

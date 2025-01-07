@@ -1,19 +1,30 @@
-import { Request, Response, NextFunction } from "express";
-import { generateApiKeyService, revokeApiKeyService } from "~/services/apiKey.service.ts";
-import { createApiKeySchema } from "~/validations/apiKey.validation.ts";
-import { asyncHandler } from "~/helper/errorHandle.ts";
-import { CREATED, OK } from "~/core/success.response.ts";
+import {Request, Response} from 'express'
+import {createApiKeySchema} from '~/validations/apiKey.validation.ts'
+import {CREATED, OK} from '~/core/success.response.ts'
+import {PrismaService} from "~/prisma/prisma.service.ts";
+import {ApiKeyService} from "~/services/apiKey.service.ts";
+import {ApiKeyRepository} from "~/repositories/apiKey.repository.ts";
+import {BadRequest} from "~/core/error.response.ts";
 
-export const generateApiKeyController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const validatedData = createApiKeySchema.parse(req.body);
-  const apiKey = await generateApiKeyService(validatedData);
+const primaService = new PrismaService()
+const apiKeyRepository = new ApiKeyRepository(primaService)
+const apiKeyService = new ApiKeyService(apiKeyRepository)
 
-  new CREATED({ message: "API key generated successfully", metadata: apiKey }).send(res);
-});
+export class ApiKeyController {
+  async generateApiKey(req: Request, res: Response) {
+    const validatedData = createApiKeySchema.parse(req.body)
+    const apiKey = await apiKeyService.createApiKey(validatedData)
 
-export const revokeApiKeyController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const { key } = req.params;
-  const apiKey = await revokeApiKeyService(key);
+    new CREATED({message: 'API key generated successfully', metadata: apiKey}).send(res)
+  }
 
-  new OK({ message: "API key revoked successfully", metadata: apiKey }).send(res);
-});
+  async revokeApiKey(req: Request, res: Response) {
+    const {key} = req.params
+
+    if (!key) throw new BadRequest('API key is required')
+
+    const apiKey = await apiKeyService.revokeApiKey(key)
+
+    new OK({message: 'API key revoked successfully', metadata: apiKey}).send(res)
+  }
+}

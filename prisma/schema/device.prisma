@@ -1,0 +1,14 @@
+model device {
+  id         Int       @id @default(autoincrement())
+  name       String
+  devviceId  String
+  is_active  Boolean   @default(false)
+  is_online  Boolean   @default(false)
+  is_start   Boolean   @default(false)
+  lastOnline DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

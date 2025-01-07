@@ -1,12 +1,31 @@
-// `src/validations/role.validation.ts`
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const createRoleSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-});
+  name: z
+    .string()
+    .min(2, 'Name must be at least 2 characters long')
+    .max(50, 'Name must not exceed 50 characters')
+    .regex(/^[a-zA-Z\s]+$/, 'Name must contain only letters and spaces'),
+  description: z
+    .string()
+    .min(2, 'Description must be at least 2 characters long')
+    .max(255, 'Description must not exceed 255 characters')
+    .regex(/^[a-zA-Z\s]+$/, 'Name must contain only letters and spaces')
+    .optional()
+})
 
 export const updateRoleSchema = z.object({
-  name: z.string().min(1, 'Name is required').optional(),
-  description: z.string().optional(),
-});
+  id: z.number().int().positive('Id must be a positive integer').min(1, 'Id must be a positive integer'),
+  name: z
+    .string()
+    .min(2, 'Name must be at least 2 characters long')
+    .max(50, 'Name must not exceed 50 characters')
+    .regex(/^[a-zA-Z\s]+$/, 'Name must contain only letters and spaces')
+    .optional(),
+  description: z
+    .string()
+    .min(2, 'Description must be at least 2 characters long')
+    .max(255, 'Description must not exceed 255 characters')
+    .regex(/^[a-zA-Z\s]+$/, 'Name must contain only letters and spaces')
+    .optional()
+})

@@ -1,0 +1,11 @@
+model CountryPhone {
+  id         Int      @id @default(autoincrement())
+  country    String
+  numberCode String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  phones Phone[]
+  userId Int?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+}

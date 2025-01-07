@@ -1,17 +1,40 @@
-import { createUser, getUserByEmail } from "~/repositories/user.repository.ts";
-import { ConflictError } from "~/core/error.response.ts";
-import bcrypt from "bcrypt";
+import { User } from '@prisma/client'
+import { UserRepository } from '~/repositories/user.repository.ts'
 
-export const registerUserService = async (data: { name: string; email: string; password: string }) => {
-  // Kiểm tra xem email đã tồn tại chưa
-  const existingUser = await getUserByEmail(data.email);
-  if (existingUser) {
-    throw new ConflictError("Email already in use");
+export class UserService {
+  private readonly userRepository: UserRepository
+
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository
   }
 
-  // Mã hóa mật khẩu
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  // Lấy thông tin chi tiết User
+  async getUserDetails(id: number): Promise<User | null> {
+    const user = await this.userRepository.getUserWithRelations(id)
+    if (!user) {
+      throw new Error('User not found')
+    }
+    return user
+  }
 
-  // Tạo người dùng mới
-  return createUser({ ...data, password: hashedPassword });
-};
+  // Xử lý logic cập nhật thông tin User
+  async updateUser(id: number, data: Partial<User>): Promise<User> {
+    return await this.userRepository.updateUser(id, data)
+  }
+
+  // Xóa User và logic liên quan
+  async deleteUser(id: number): Promise<void> {
+    const user = await this.userRepository.getUserById(id)
+    if (!user) {
+      throw new Error('User not found')
+    }
+    await this.userRepository.deleteUser(id)
+  }
+
+  // Lấy danh sách Users với phân trang
+  async listUsers(page: number, size: number): Promise<User[]> {
+    const skip = (page - 1) * size
+    const take = size
+    return await this.userRepository.getUsers(skip, take)
+  }
+}

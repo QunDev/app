@@ -1,27 +1,33 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+export class CountryPhoneRepository {
+  private readonly prisma: PrismaClient
 
-export const getCountryPhones = async () => {
-  return prisma.countryPhone.findMany();
-};
+  constructor(prisma: PrismaClient) {
+    this.prisma = new PrismaClient()
+  }
 
-export const getCountryPhoneById = async (id: number) => {
-  return prisma.countryPhone.findUnique({ where: { id } });
-};
+  async getCountryPhones() {
+    return this.prisma.countryPhone.findMany()
+  }
 
-export const getCountryPhoneByNumberCode = async (numberCode: string) => {
-  return prisma.countryPhone.findFirst({ where: { numberCode } });
-};
+  async getCountryPhoneById(id: number) {
+    return this.prisma.countryPhone.findUnique({ where: { id } })
+  }
 
-export const createCountryPhone = async (data: any) => {
-  return prisma.countryPhone.create({ data });
-};
+  async getCountryPhoneByNumberCode(numberCode: string) {
+    return this.prisma.countryPhone.findFirst({ where: { numberCode } })
+  }
 
-export const updateCountryPhone = async (id: number, data: any) => {
-  return prisma.countryPhone.update({ where: { id }, data });
-};
+  async createCountryPhone(data: any) {
+    return this.prisma.countryPhone.create({ data })
+  }
 
-export const deleteCountryPhone = async (id: number) => {
-  return prisma.countryPhone.delete({ where: { id } });
-};
+  async updateCountryPhone(id: number, data: any) {
+    return this.prisma.countryPhone.update({ where: { id }, data })
+  }
+
+  async deleteCountryPhone(id: number) {
+    return this.prisma.countryPhone.delete({ where: { id } })
+  }
+}

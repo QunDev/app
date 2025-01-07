@@ -1,0 +1,9 @@
+model ScriptData {
+  id        Int      @id @default(autoincrement())
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  scriptId Int
+  script   Script @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,22 @@
+enum ApiKeyStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+}
+
+model ApiKey {
+  id          Int          @id @default(autoincrement())
+  key         String       @unique
+  userId      Int?
+  appId       Int?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      ApiKeyStatus @default(ACTIVE)
+  description String?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  expiresAt    DateTime?
+  accountAppId Int?
+
+  @@index([key])
+}

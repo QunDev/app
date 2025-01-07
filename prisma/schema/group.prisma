@@ -1,0 +1,11 @@
+model Group {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+
+  users GroupUser[]
+  roles GroupRole[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

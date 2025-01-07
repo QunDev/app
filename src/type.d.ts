@@ -1,10 +1,10 @@
-import { User } from '~/models/user.model';
+import 'express'
+import { userWithRoole } from '~/types/auth.type.ts'
 
 declare global {
   namespace Express {
-    export interface Request {
-      user?: User;
-
+    interface Request {
+      user?: userWithRoole
     }
   }
 }
@@ -14,11 +14,13 @@ declare module 'express-serve-static-core' {
     raw?: {
       files?: {
         file?: {
-          filename: string;
-          file: NodeJS.ReadableStream;
-          size: number;
-        };
-      };
-    };
+          filename: string
+          file: NodeJS.ReadableStream
+          size: number
+        }
+      }
+    }
   }
 }
+
+export {}

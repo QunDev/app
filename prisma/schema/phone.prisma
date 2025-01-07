@@ -1,0 +1,16 @@
+model Phone {
+  id        Int      @id @default(autoincrement())
+  number    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  appId Int?
+  app   App? @relation(fields: [appId], references: [id], onDelete: SetNull)
+
+  countryPhoneId Int
+  countryPhone   CountryPhone @relation(fields: [countryPhoneId], references: [id], onDelete: Cascade)
+
+  userId       Int
+  user         User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountAppId Int?
+}

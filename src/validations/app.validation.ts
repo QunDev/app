@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const createAppSchema = z.object({
   name: z.string().min(1, 'App name is required'),
-  userId: z.number().int().positive('User ID must be a positive integer'),
-});
+  userId: z.string()
+})
 
 export const updateAppSchema = z.object({
   name: z.string().min(1, 'App name is required').optional(),
-  userId: z.number().int().positive('User ID must be a positive integer').optional(),
-});
+  userId: z.string().optional()
+})

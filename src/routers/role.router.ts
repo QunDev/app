@@ -1,15 +1,16 @@
-// `src/routers/role.router.ts`
-import express from 'express';
-import * as roleController from '~/controllers/role.controller.ts';
-import { validate } from '~/middlewares/validation.middleware.ts';
-import { createRoleSchema, updateRoleSchema } from '~/validations/role.validation.ts';
+import express from 'express'
+import { RoleController } from '~/controllers/role.controller.ts'
+import { asyncHandler } from '~/helper/errorHandle.ts'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/', roleController.getRoles);
-router.get('/:id', roleController.getRole);
-router.post('/', validate(createRoleSchema), roleController.createRole);
-router.put('/:id', validate(updateRoleSchema), roleController.updateRole);
-router.delete('/:id', roleController.deleteRole);
+const roleController = new RoleController()
 
-export default router;
+router.get('/', asyncHandler(roleController.getRoles))
+router.get('/:id', asyncHandler(roleController.getRoleById))
+router.post('/', asyncHandler(roleController.createRole))
+router.put('/', asyncHandler(roleController.updateRole))
+router.delete('/:id', asyncHandler(roleController.deleteRole))
+router.put('/:id/reset', asyncHandler(roleController.resetRole))
+
+export default router

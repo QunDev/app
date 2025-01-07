@@ -1,0 +1,10 @@
+model GroupRole {
+  id      Int @id @default(autoincrement())
+  groupId Int
+  roleId  Int
+
+  group Group @relation(fields: [groupId], references: [id])
+  role  Role  @relation(fields: [roleId], references: [id])
+
+  @@unique([groupId, roleId]) // Một group không thể có cùng một role hai lần
+}

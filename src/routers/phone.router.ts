@@ -1,18 +1,19 @@
-import express from 'express';
-import * as phoneController from '~/controllers/phone.controller.ts';
-import { validate } from '~/middlewares/validation.middleware.ts';
-import { createPhoneSchema, updatePhoneSchema } from '~/validations/phone.validation.ts';
+import express from 'express'
+import {PhoneController} from "~/controllers/phone.controller.ts";
+import {asyncHandler} from "~/helper/errorHandle.ts";
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/', phoneController.getPhones);
-router.get('/:id', phoneController.getPhone);
-router.get('/random/:appId', phoneController.getRandomPhoneByAppId);
-router.post('/', validate(createPhoneSchema), phoneController.createPhones);
-router.put('/updateAppId', phoneController.updateAppIdAllPhones); // New route for bulk update
-router.put('/', phoneController.updateMultiplePhones); // New route for bulk update
-router.put('/:id', validate(updatePhoneSchema), phoneController.updatePhone);
-router.delete('/:id', phoneController.deletePhone);
-router.delete('/', phoneController.deleteAllPhones);
+const phoneController = new PhoneController()
 
-export default router;
+router.get('/', asyncHandler(phoneController.getPhones))
+router.get('/:id', asyncHandler(phoneController.getPhone))
+router.get('/random/:appId', asyncHandler(phoneController.getRandomPhoneByAppId))
+router.post('/', asyncHandler(phoneController.createPhones))
+router.put('/updateAppId', asyncHandler(phoneController.updateAppIdAllPhones)) // New route for bulk update
+router.put('/', asyncHandler(phoneController.updatePhones)) // New route for bulk update
+router.put('/:id', asyncHandler(phoneController.updatePhone))
+router.delete('/:id', asyncHandler(phoneController.deletePhone))
+router.delete('/', asyncHandler(phoneController.deleteAllPhones))
+
+export default router

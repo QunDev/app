@@ -1,21 +1,22 @@
-import { prisma } from "~/utils/prismaClient.ts";
-import { ApiKey } from "@prisma/client";
+import {ApiKey} from '@prisma/client'
+import {PrismaService} from "~/prisma/prisma.service.ts";
 
-export const createApiKey = async (data: { key: string; description?: string; userId?: number; appId?: number }): Promise<ApiKey> => {
-  return prisma.apiKey.create({
-    data,
-  });
-};
+export class ApiKeyRepository {
+  private readonly prisma: PrismaService
 
-export const getApiKeyByKey = async (key: string): Promise<ApiKey | null> => {
-  return prisma.apiKey.findUnique({
-    where: { key },
-  });
-};
+  constructor(prisma: PrismaService) {
+    this.prisma = prisma
+  }
 
-export const revokeApiKey = async (key: string): Promise<ApiKey> => {
-  return prisma.apiKey.update({
-    where: { key },
-    data: { status: "REVOKED" },
-  });
-};
+  async createApiKey(data: Pick<ApiKey, 'key'>): Promise<ApiKey> {
+    return this.prisma.apiKey.create({data})
+  }
+
+  async getApiKeyByKey(key: string): Promise<ApiKey | null> {
+    return this.prisma.apiKey.findUnique({where: {key}})
+  }
+
+  async revokeApiKey(key: string): Promise<ApiKey> {
+    return this.prisma.apiKey.update({where: {key}, data: {status: 'REVOKED'}})
+  }
+}

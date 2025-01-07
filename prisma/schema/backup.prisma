@@ -1,0 +1,17 @@
+model Backup {
+  id           Int     @id @default(autoincrement())
+  filename     String
+  filepath     String
+  filesize     Int
+  appId        Int
+  description  String?
+  userId       Int
+  accountAppId Int?
+
+  app        App         @relation(fields: [appId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountApp accountApp? @relation(fields: [accountAppId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

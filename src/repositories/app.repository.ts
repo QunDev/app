@@ -1,27 +1,54 @@
-import { PrismaClient } from '@prisma/client';
+import {PrismaService} from "~/prisma/prisma.service.ts";
+import {App} from "@prisma/client";
 
-const prisma = new PrismaClient();
+export class AppRepository {
+  private readonly prisma: PrismaService
 
-export const getApps = async () => {
-  return prisma.app.findMany();
-};
+  constructor(prisma: PrismaService) {
+    this.prisma = prisma
+  }
 
-export const getAppById = async (id: number) => {
-  return prisma.app.findUnique({ where: { id } });
-};
+  async getAllApps() {
+    return this.prisma.app.findMany(
+      {
+        select: {
+          id: true,
+          name: true,
+          filepath: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      }
+    )
+  }
 
-export const getAppByName = async (name: string) => {
-  return prisma.app.findFirst({ where: { name } });
+  async getApp(id: number) {
+    return this.prisma.app.findUnique({
+      where: {id},
+      select: {
+        id: true,
+        name: true,
+        filepath: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true
+      }
+    })
+  }
+
+  async getAppByName(name: string) {
+    return this.prisma.app.findFirst({where: {name}})
+  }
+
+  async createNewApp(data: Pick<App, 'name' | 'userId' | 'filepath'>): Promise<App> {
+    return this.prisma.app.create({data})
+  }
+
+  async updateExistingApp(id: number, data: Partial<App>): Promise<App> {
+    return this.prisma.app.update({where: {id}, data})
+  }
+
+  async removeApp(id: number) {
+    return this.prisma.app.delete({where: {id}})
+  }
 }
-
-export const createApp = async (data: any) => {
-  return prisma.app.create({ data });
-};
-
-export const updateApp = async (id: number, data: any) => {
-  return prisma.app.update({ where: { id }, data });
-};
-
-export const deleteApp = async (id: number) => {
-  return prisma.app.delete({ where: { id } });
-};

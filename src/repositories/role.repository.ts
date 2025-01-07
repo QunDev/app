@@ -1,28 +1,64 @@
-// `src/repositories/role.repository.ts`
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from '~/prisma/prisma.service.ts'
+import { Role } from '@prisma/client'
 
-const prisma = new PrismaClient();
+export class RoleRepository {
+  private readonly prisma: PrismaService
 
-export const getRoles = async () => {
-  return prisma.role.findMany();
-};
+  constructor(prisma: PrismaService) {
+    this.prisma = prisma
+  }
 
-export const getRoleById = async (id: number) => {
-  return prisma.role.findUnique({ where: { id } });
-};
+  // Lấy danh sách Role
+  async getRoles(): Promise<Role[]> {
+    return this.prisma.role.findMany({
+      orderBy: { createdAt: 'desc' }
+    })
+  }
 
-export const createRole = async (data: any) => {
-  return prisma.role.create({ data });
-};
+  // Lấy thông tin Role bằng ID
+  async getRoleById(id: number): Promise<Role | null> {
+    return this.prisma.role.findUnique({
+      where: { id }
+    })
+  }
 
-export const updateRole = async (id: number, data: any) => {
-  return prisma.role.update({ where: { id }, data });
-};
+  // Tạo mới Role
+  async createRole(data: Pick<Role, 'name'>): Promise<Role> {
+    return this.prisma.role.create({ data })
+  }
 
-export const deleteRole = async (id: number) => {
-  return prisma.role.delete({ where: { id } });
-};
+  // Lấy thông tin Role bằng Name
+  async getRoleByName(name: string): Promise<Role | null> {
+    return this.prisma.role.findUnique({
+      where: { name }
+    })
+  }
 
-export const getRoleByName = async (name: string) => {
-  return prisma.role.findFirst({ where: { name } });
-};
+  // Xoá Role
+  async deleteRole(id: number): Promise<Role> {
+    return this.prisma.role.update({
+      where: {
+        id,
+        isDeleted: false
+      },
+      data: {
+        deletedAt: new Date(),
+        isDeleted: true
+      }
+    })
+  }
+
+  // Reset Role
+  async resetRole(id: number): Promise<Role> {
+    return this.prisma.role.update({
+      where: {
+        id,
+        isDeleted: true
+      },
+      data: {
+        deletedAt: null,
+        isDeleted: false
+      }
+    })
+  }
+}

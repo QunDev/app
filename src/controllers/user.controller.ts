@@ -1,23 +1,23 @@
-import { Request, Response, NextFunction } from "express";
-import { registerUserService } from "~/services/user.service.ts";
-import { createUserSchema } from "~/validations/user.validation.ts";
-import { asyncHandler } from "~/helper/errorHandle.ts";
-import { CREATED } from "~/core/success.response.ts";
-import {getInfoData} from "~/utils";
+import { Request, Response } from 'express'
+import { PrismaService } from '~/prisma/prisma.service.ts'
+import { UserRepository } from '~/repositories/user.repository.ts'
+import { UserService } from '~/services/user.service.ts'
 
-export const registerUserController = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  // Xác thực dữ liệu đầu vào
-  const validatedData = createUserSchema.parse(req.body);
-  const { confirmPassword, ...userData } = validatedData;
+const prismaService = new PrismaService()
+const userRepository = new UserRepository(prismaService)
+const userService = new UserService(userRepository)
 
-  // Gọi service để đăng ký người dùng
-  const user = await registerUserService(userData);
+export class UserController {
+  async listUsers(req: Request, res: Response) {
+    try {
+      const page = parseInt(req.query.page as string) || 1
+      const size = parseInt(req.query.size as string) || 10
 
-  // Trả về phản hồi thành công
-  new CREATED({
-    message: "User registered successfully", metadata: getInfoData({
-      fileds: ['id', 'name', 'email', 'createdAt', 'updatedAt', 'createdBy', 'updatedBy'],
-      object: user
-    })
-  }).send(res);
-});
+      const users = await userService.listUsers(page, size)
+
+      res.status(200).json({ success: true, data: users })
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error.message })
+    }
+  }
+}

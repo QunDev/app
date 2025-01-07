@@ -1,0 +1,10 @@
+model GroupUser {
+  id      Int @id @default(autoincrement())
+  groupId Int
+  userId  Int
+
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([groupId, userId]) // Một user không thể tham gia cùng một group hai lần
+}

@@ -1,58 +1,66 @@
-import * as countryPhoneRepository from '~/repositories/countryPhone.repository.ts';
-import {ConflictError, NotFoundError, UnprocessableEntity} from '~/core/error.response.ts';
+import { ConflictError, NotFoundError, UnprocessableEntity } from '~/core/error.response.ts'
+import {CountryPhoneRepository} from "~/repositories/countryPhone.repository.ts";
 
-export const getAllCountryPhones = async () => {
-  return await countryPhoneRepository.getCountryPhones();
-};
+export class CountryPhoneService {
+  private readonly countryPhoneRepository: CountryPhoneRepository
 
-export const getCountryPhone = async (id: number) => {
-  const countryPhone = await countryPhoneRepository.getCountryPhoneById(id);
-  if (!countryPhone) {
-    throw new NotFoundError('Country phone not found');
-  }
-  return countryPhone;
-};
-
-export const createNewCountryPhone = async (data: any) => {
-  const {country, numberCode} = data;
-
-  // Check if numberCode already exists
-  const existingCountryPhone = await countryPhoneRepository.getCountryPhoneByNumberCode(numberCode);
-  if (existingCountryPhone) {
-    throw new ConflictError('Number code already in use');
+  constructor(countryPhoneRepository: CountryPhoneRepository) {
+    this.countryPhoneRepository = countryPhoneRepository
   }
 
-  // Create the country phone
-  const newCountryPhone = await countryPhoneRepository.createCountryPhone(data);
-  return newCountryPhone;
-};
-
-export const updateExistingCountryPhone = async (id: number, data: any) => {
-  const countryPhone = await countryPhoneRepository.getCountryPhoneById(id);
-  if (!countryPhone) {
-    throw new NotFoundError('Country phone not found');
+  async getAllCountryPhones() {
+    return this.countryPhoneRepository.getCountryPhones()
   }
 
-  // Check if numberCode already exists
-  if (data.numberCode && data.numberCode !== countryPhone.numberCode) {
-    const existingCountryPhone = await countryPhoneRepository.getCountryPhoneByNumberCode(data.numberCode);
-    if (existingCountryPhone) {
-      throw new ConflictError('Number code already in use');
+  async getCountryPhone(id: number) {
+    const countryPhone = await this.countryPhoneRepository.getCountryPhoneById(id)
+    if (!countryPhone) {
+      throw new NotFoundError('Country phone not found')
     }
+    return countryPhone
   }
 
-  if (!data || Object.keys(data).length === 0) {
-    throw new UnprocessableEntity('At least one field is required');
+  async createNewCountryPhone(data: any) {
+    const { country, numberCode } = data
+
+    // Check if numberCode already exists
+    const existingCountryPhone = await this.countryPhoneRepository.getCountryPhoneByNumberCode(numberCode)
+    if (existingCountryPhone) {
+      throw new ConflictError('Number code already in use')
+    }
+
+    // Create the country phone
+    const newCountryPhone = await this.countryPhoneRepository.createCountryPhone(data)
+    return newCountryPhone
   }
 
-  return await countryPhoneRepository.updateCountryPhone(id, data);
-};
+  async updateExistingCountryPhone(id: number, data: any) {
+    const countryPhone = await this.countryPhoneRepository.getCountryPhoneById(id)
+    if (!countryPhone) {
+      throw new NotFoundError('Country phone not found')
+    }
 
-export const removeCountryPhone = async (id: number) => {
-  const countryPhone = await countryPhoneRepository.getCountryPhoneById(id);
-  if (!countryPhone) {
-    throw new NotFoundError('Country phone not found');
+    // Check if numberCode already exists
+    if (data.numberCode && data.numberCode !== countryPhone.numberCode) {
+      const existingCountryPhone = await this.countryPhoneRepository.getCountryPhoneByNumberCode(data.numberCode)
+      if (existingCountryPhone) {
+        throw new ConflictError('Number code already in use')
+      }
+    }
+
+    if (!data || Object.keys(data).length === 0) {
+      throw new UnprocessableEntity('At least one field is required')
+    }
+
+    return await this.countryPhoneRepository.updateCountryPhone(id, data)
   }
 
-  await countryPhoneRepository.deleteCountryPhone(id);
-};
+  async removeCountryPhone(id: number) {
+    const countryPhone = await this.countryPhoneRepository.getCountryPhoneById(id)
+    if (!countryPhone) {
+      throw new NotFoundError('Country phone not found')
+    }
+
+    await this.countryPhoneRepository.deleteCountryPhone(id)
+  }
+}

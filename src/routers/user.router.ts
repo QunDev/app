@@ -1,10 +1,9 @@
-import express from "express";
-import { registerUserController } from "~/controllers/user.controller.ts";
-import { validate } from "~/middlewares/validation.middleware.ts";
-import { createUserSchema } from "~/validations/user.validation.ts";
+import express from 'express'
+import { UserController } from '~/controllers/user.controller.ts'
+import { asyncHandler } from '~/helper/errorHandle.ts'
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/register", validate(createUserSchema), registerUserController);
+const userController = new UserController()
 
-export default router;
+export default router

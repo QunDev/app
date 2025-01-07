@@ -1,0 +1,19 @@
+model accountApp {
+  id        Int      @id @default(autoincrement())
+  firstname String?
+  lastname  String?
+  address   String?
+  zipcode   String?
+  email     String?
+  password  String?
+  phone     String?
+  sms       String?  @db.LongText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId  Int
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  appId   Int
+  app     App      @relation(fields: [appId], references: [id], onDelete: Cascade)
+  backups Backup[]
+}

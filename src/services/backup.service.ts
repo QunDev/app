@@ -1,64 +1,53 @@
-import * as backupRepository from '~/repositories/backup.repository.ts';
-import {ConflictError, NotFoundError, UnprocessableEntity} from '~/core/error.response.ts';
+import {UnprocessableEntity} from '~/core/error.response.ts'
+import {BackupRepository} from "~/repositories/backup.repository.ts";
 
-export const getAllBackups = async () => {
-  return backupRepository.getBackups();
-};
+export class BackupService {
+  private readonly backupRepository;
 
-export const getBackup = async (id: number) => {
-  const backup = await backupRepository.getBackupById(id);
-  if (!backup) {
-    throw new NotFoundError('Backup not found');
+  constructor(backupRepository: BackupRepository) {
+    this.backupRepository = backupRepository;
   }
-  return backup;
-};
 
-export const createNewBackup = async ({filename, filepath, filesize, appId, description, userId}: {
-  filename: string;
-  filepath: string;
-  filesize: number;
-  appId: number;
-  description?: string;
-  userId: number;
-}) => {
-  return await backupRepository.createBackup(
-    {
-      filename,
-      filepath,
-      filesize,
-      appId,
-      description,
-      userId,
+  async getBackups() {
+    return this.backupRepository.getBackups();
+  }
+
+  async getBackupById(id: number) {
+    if (isNaN(id)) {
+      throw new UnprocessableEntity('Invalid ID')
     }
-  );
-};
 
-export const updateExistingBackup = async (id: number, data: any) => {
-  const backup = await backupRepository.getBackupById(id);
-  if (!backup) {
-    throw new NotFoundError('Backup not found');
+    return this.backupRepository.getBackupById(id);
   }
 
-  if (!data || Object.keys(data).length === 0) {
-    throw new UnprocessableEntity('At least one field is required');
+  async createBackup(data: any) {
+    if (!data) {
+      throw new UnprocessableEntity('Data is required')
+    }
+
+    return this.backupRepository.createBackup(data);
   }
 
-  return await backupRepository.updateBackup(id, data);
-};
+  async updateBackup(id: number, data: any) {
+    if (isNaN(id)) {
+      throw new UnprocessableEntity('Invalid ID')
+    }
+    if (!data) {
+      throw new UnprocessableEntity('Data is required')
+    }
 
-export const removeBackup = async (id: number) => {
-  const backup = await backupRepository.getBackupById(id);
-  if (!backup) {
-    throw new NotFoundError('Backup not found');
+    return this.backupRepository.updateBackup(id, data);
   }
 
-  await backupRepository.deleteBackup(id);
-};
+  async deleteBackup(id: number) {
+    if (isNaN(id)) {
+      throw new UnprocessableEntity('Invalid ID')
+    }
 
-export const getBackupByFilename = async (filename: string) => {
-  const backup = await backupRepository.getBackupByFilename(filename);
-  if (!backup) {
-    throw new NotFoundError('Backup not found');
+    return this.backupRepository.deleteBackup(id);
   }
-  return backup;
-};
+
+  async getBackupByFilename(filename: string) {
+    return this.backupRepository.getBackupByFilename(filename);
+  }
+}

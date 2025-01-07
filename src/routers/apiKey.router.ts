@@ -1,11 +1,12 @@
-import express from "express";
-import { generateApiKeyController, revokeApiKeyController } from "~/controllers/apiKey.controller.ts";
-import { validate } from "~/middlewares/validation.middleware.ts";
-import { createApiKeySchema } from "~/validations/apiKey.validation.ts";
+import express from 'express'
+import {ApiKeyController} from "~/controllers/apiKey.controller.ts";
+import {asyncHandler} from "~/helper/errorHandle.ts";
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/generate", validate(createApiKeySchema), generateApiKeyController);
-router.post("/revoke/:key", revokeApiKeyController);
+const apiKeyController = new ApiKeyController()
 
-export default router;
+router.post('/generate', asyncHandler(apiKeyController.generateApiKey))
+router.post('/revoke/:key', asyncHandler(apiKeyController.revokeApiKey))
+
+export default router

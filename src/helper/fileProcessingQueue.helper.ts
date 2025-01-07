@@ -1,9 +1,9 @@
-import Queue from 'bull';
-import { createWriteStream } from 'fs';
-import { promisify } from 'util';
-import {pipeline, Readable} from 'stream';
+import Queue from 'bull'
+import { createWriteStream } from 'fs'
+import { promisify } from 'util'
+import { pipeline, Readable } from 'stream'
 
-const pump = promisify(pipeline);
+const pump = promisify(pipeline)
 
 // Tạo hàng đợi xử lý file
 // export const fileProcessingQueue = new Queue('file-processing');
@@ -23,11 +23,11 @@ const pump = promisify(pipeline);
 //   await pump(bufferStream, createWriteStream(filepath));
 // });
 
-export const fileProcessing = async ({ buffer, filepath }: {buffer: any, filepath: string}) => {
-  const bufferStream = new Readable();
-  bufferStream.push(buffer);
-  bufferStream.push(null);
+export const fileProcessing = async ({ buffer, filepath }: { buffer: any; filepath: string }) => {
+  const bufferStream = new Readable()
+  bufferStream.push(buffer)
+  bufferStream.push(null)
 
   // Ghi file vào hệ thống
-  await pump(bufferStream, createWriteStream(filepath));
+  await pump(bufferStream, createWriteStream(filepath))
 }

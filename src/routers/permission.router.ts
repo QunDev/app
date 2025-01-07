@@ -1,14 +1,16 @@
-import express from 'express';
-import * as permissionController from '~/controllers/permission.controller.ts';
-import { validate } from '~/middlewares/validation.middleware.ts';
-import { createPermissionSchema, updatePermissionSchema } from '~/validations/permission.validation.ts';
+import express from 'express'
+import { asyncHandler } from '~/helper/errorHandle.ts'
+import { PermissionController } from '~/controllers/permission.controller.ts'
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/', permissionController.getPermissions);
-router.get('/:id', permissionController.getPermission);
-router.post('/', validate(createPermissionSchema), permissionController.createPermission);
-router.put('/:id', validate(updatePermissionSchema), permissionController.updatePermission);
-router.delete('/:id', permissionController.deletePermission);
+const permissionController = new PermissionController()
 
-export default router;
+router.get('/', asyncHandler(permissionController.getPermissions))
+router.get('/:id', asyncHandler(permissionController.getPermissionById))
+router.post('/', asyncHandler(permissionController.createPermission))
+router.put('/', asyncHandler(permissionController.updatePermission))
+router.delete('/:id', asyncHandler(permissionController.deletePermission))
+router.put('/:id/reset', asyncHandler(permissionController.resetPermission))
+
+export default router

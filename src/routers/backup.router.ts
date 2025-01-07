@@ -1,16 +1,16 @@
-import express from 'express';
-import * as backupController from '~/controllers/backup.controller.ts';
-import { validate } from '~/middlewares/validation.middleware.ts';
-import {createBackupSchema, updateBackupSchema} from '~/validations/backup.validation.ts';
-import {downloadBackup} from "~/middlewares/downloadBackup.middleware.ts";
+import express from 'express'
+import {BackupController} from "~/controllers/backup.controller.ts";
+import {asyncHandler} from "~/helper/errorHandle.ts";
 
-const router = express.Router();
+const router = express.Router()
 
-router.get('/download/:filename',downloadBackup , backupController.downloadBackup);
-router.get('/', backupController.getBackups);
-router.get('/:id', backupController.getBackup);
-router.post('/', validate(createBackupSchema), backupController.createBackup);
-router.put('/:id', validate(updateBackupSchema), backupController.updateBackup);
-router.delete('/:id', backupController.deleteBackup);
+const backupController = new BackupController()
 
-export default router;
+router.get('/download/:appName/:filename', asyncHandler(backupController.downloadBackup))
+router.get('/', asyncHandler(backupController.getBackups))
+router.get('/:id', asyncHandler(backupController.getBackup))
+router.post('/', asyncHandler(backupController.createBackup))
+router.put('/:id', asyncHandler(backupController.updateBackup))
+router.delete('/:id', (backupController.deleteBackup))
+
+export default router

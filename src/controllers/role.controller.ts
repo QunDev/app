@@ -1,50 +1,84 @@
-// `src/controllers/role.controller.ts`
-import {Request, Response, NextFunction} from 'express';
-import * as roleService from '~/services/role.service.ts';
-import {CREATED, OK} from '~/core/success.response.ts';
-import {asyncHandler} from "~/helper/errorHandle.ts";
+import { Request, Response } from 'express'
+import { PrismaService } from '~/prisma/prisma.service.ts'
+import { CREATED, NO_CONTENT, OK } from '~/core/success.response.ts'
+import { getInfoData } from '~/utils'
+import { createRoleSchema, updateRoleSchema } from '~/validations/role.validation.ts'
+import { RoleRepository } from '~/repositories/role.repository.ts'
+import { RoleService } from '~/services/role.service.ts'
+import { BadRequest } from '~/core/error.response.ts'
 
-export const getRoles = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const roles = await roleService.getAllRoles();
-    new OK({message: 'Roles retrieved successfully', metadata: roles}).send(res);
-  } catch (error) {
-    next(error);
-  }
-});
+const prismaService = new PrismaService()
+const roleRepository = new RoleRepository(prismaService)
+const roleService = new RoleService(roleRepository)
 
-export const getRole = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const role = await roleService.getRole(Number(req.params.id));
-    new OK({message: 'Role retrieved successfully', metadata: role}).send(res);
-  } catch (error) {
-    next(error);
-  }
-});
+export class RoleController {
+  async getRoles(req: Request, res: Response) {
+    const roles = await roleService.getRoles()
 
-export const createRole = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const newRole = await roleService.createNewRole(req.body);
-    new CREATED({message: 'Role created successfully', metadata: newRole}).send(res);
-  } catch (error) {
-    next(error);
+    new OK({
+      message: 'List roles successfully',
+      metadata: roles
+    }).send(res)
   }
-});
 
-export const updateRole = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const updatedRole = await roleService.updateExistingRole(Number(req.params.id), req.body);
-    new OK({message: 'Role updated successfully', metadata: updatedRole}).send(res);
-  } catch (error) {
-    next(error);
-  }
-});
+  async getRoleById(req: Request, res: Response) {
+    const id = parseInt(req.params.id)
+    if (isNaN(id)) throw new BadRequest('Invalid ID')
+    const role = await roleService.getRoleById(id)
 
-export const deleteRole = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await roleService.removeRole(Number(req.params.id));
-    new OK({message: 'Role deleted successfully', metadata: undefined}).send(res);
-  } catch (error) {
-    next(error);
+    new OK({
+      message: 'Get role successfully',
+      metadata: role
+    }).send(res)
   }
-});
+
+  async createRole(req: Request, res: Response) {
+    const validatedData = createRoleSchema.parse(req.body)
+
+    const role = await roleService.createRole(validatedData)
+
+    new CREATED({
+      message: 'Created successfully',
+      metadata: getInfoData({
+        fileds: ['name', 'description', 'createdAt'],
+        object: role
+      })
+    }).send(res)
+  }
+
+  async updateRole(req: Request, res: Response) {
+    // Validate
+    const validatedData = updateRoleSchema.parse(req.body)
+
+    // Gọi service => service tự lo queue
+    const updatedRole = await roleService.updateRole(validatedData)
+
+    // Trả về kết quả
+    new OK({
+      message: 'Updated successfully',
+      metadata: updatedRole
+    }).send(res)
+  }
+
+  async deleteRole(req: Request, res: Response) {
+    const id = parseInt(req.params.id)
+    if (isNaN(id)) throw new BadRequest('Invalid ID')
+    const role = await roleService.deleteRole(id)
+
+    new OK({
+      message: 'Deleted role successfully',
+      metadata: undefined
+    }).send(res)
+  }
+
+  async resetRole(req: Request, res: Response) {
+    const id = parseInt(req.params.id)
+    if (isNaN(id)) throw new BadRequest('Invalid ID')
+    const role = await roleService.resetRole(id)
+
+    new OK({
+      message: 'Reset role successfully',
+      metadata: undefined
+    }).send(res)
+  }
+}

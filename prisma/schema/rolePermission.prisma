@@ -1,0 +1,12 @@
+model RolePermission {
+  id           Int @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  assignedAt DateTime @default(now())
+
+  @@unique([roleId, permissionId]) // Một role không thể có cùng một permission hai lần
+}

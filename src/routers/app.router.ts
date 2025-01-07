@@ -1,14 +1,15 @@
-import express from 'express';
-import * as appController from '~/controllers/app.controller.ts';
-import { validate } from '~/middlewares/validation.middleware.ts';
-import { createAppSchema, updateAppSchema } from '~/validations/app.validation.ts';
+import express from 'express'
+import {AppController} from '~/controllers/app.controller.ts'
+import {asyncHandler} from "~/helper/errorHandle.ts";
 
-const router = express.Router();
+const appController = new AppController();
 
-router.get('/', appController.getApps);
-router.get('/:id', appController.getApp);
-router.post('/', validate(createAppSchema), appController.createApp);
-router.put('/:id', validate(updateAppSchema), appController.updateApp);
-router.delete('/:id', appController.deleteApp);
+const router = express.Router()
 
-export default router;
+router.get('/', asyncHandler(appController.getApps))
+router.get('/:id', asyncHandler(appController.getApp))
+router.post('/', asyncHandler(appController.createApp))
+router.put('/:id', asyncHandler(appController.updateApp))
+router.delete('/:id', asyncHandler(appController.deleteApp))
+
+export default router

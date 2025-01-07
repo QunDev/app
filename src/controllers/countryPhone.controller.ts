@@ -1,49 +1,43 @@
-import { Request, Response, NextFunction } from 'express';
-import * as countryPhoneService from '~/services/countryPhone.service.ts';
-import { OK, CREATED } from '~/core/success.response.ts';
-import {asyncHandler} from "~/helper/errorHandle.ts";
+import { Request, Response, NextFunction } from 'express'
+import { OK, CREATED } from '~/core/success.response.ts'
+import {PrismaClient} from "@prisma/client";
+import {CountryPhoneRepository} from "~/repositories/countryPhone.repository.ts";
+import {CountryPhoneService} from "~/services/countryPhone.service.ts";
+import {BadRequest} from "~/core/error.response.ts";
+import {createCountryPhoneSchema, updateCountryPhoneSchema} from "~/validations/countryPhone.validation.ts";
 
-export const getCountryPhones = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const countryPhones = await countryPhoneService.getAllCountryPhones();
-    new OK({ message: 'Country phones retrieved successfully', metadata: countryPhones }).send(res);
-  } catch (error) {
-    next(error);
-  }
-};
+const prismaClient = new PrismaClient()
+const countryPhoneRepository = new CountryPhoneRepository(prismaClient)
+const countryPhoneService = new CountryPhoneService(countryPhoneRepository)
 
-export const getCountryPhone = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const countryPhone = await countryPhoneService.getCountryPhone(Number(req.params.id));
-    new OK({ message: 'Country phone retrieved successfully', metadata: countryPhone }).send(res);
-  } catch (error) {
-    next(error);
+export class CountryPhoneController {
+  async getCountryPhones(req: Request, res: Response, next: NextFunction) {
+    const countryPhones = await countryPhoneService.getAllCountryPhones()
+    new OK({ message: 'Country phones retrieved successfully', metadata: countryPhones }).send(res)
   }
-};
 
-export const createCountryPhone = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const newCountryPhone = await countryPhoneService.createNewCountryPhone(req.body);
-    new CREATED({ message: 'Country phone created successfully', metadata: newCountryPhone }).send(res);
-  } catch (error) {
-    next(error);
+  async getCountryPhone(req: Request, res: Response, next: NextFunction) {
+    if (isNaN(Number(req.params.id))) throw new BadRequest('Invalid country phone ID')
+    const countryPhone = await countryPhoneService.getCountryPhone(Number(req.params.id))
+    new OK({ message: 'Country phone retrieved successfully', metadata: countryPhone }).send(res)
   }
-};
 
-export const updateCountryPhone =asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const updatedCountryPhone = await countryPhoneService.updateExistingCountryPhone(Number(req.params.id), req.body);
-    new OK({ message: 'Country phone updated successfully', metadata: updatedCountryPhone }).send(res);
-  } catch (error) {
-    next(error);
+  async createCountryPhone(req: Request, res: Response, next: NextFunction) {
+    const data = createCountryPhoneSchema.parse(req.body)
+    const newCountryPhone = await countryPhoneService.createNewCountryPhone(data)
+    new CREATED({ message: 'Country phone created successfully', metadata: newCountryPhone }).send(res)
   }
-});
 
-export const deleteCountryPhone = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await countryPhoneService.removeCountryPhone(Number(req.params.id));
-    new OK({ message: 'Country phone deleted successfully', metadata:undefined }).send(res);
-  } catch (error) {
-    next(error);
+  async updateCountryPhone(req: Request, res: Response, next: NextFunction) {
+    if (isNaN(Number(req.params.id))) throw new BadRequest('Invalid country phone ID')
+    const data = updateCountryPhoneSchema.parse(req.body)
+    const updatedCountryPhone = await countryPhoneService.updateExistingCountryPhone(Number(req.params.id), data)
+    new OK({ message: 'Country phone updated successfully', metadata: updatedCountryPhone }).send(res)
   }
-};
+
+  async deleteCountryPhone(req: Request, res: Response, next: NextFunction) {
+    if (isNaN(Number(req.params.id))) throw new BadRequest('Invalid country phone ID')
+    await countryPhoneService.removeCountryPhone(Number(req.params.id))
+    new OK({ message: 'Country phone deleted successfully', metadata: undefined }).send(res)
+  }
+}

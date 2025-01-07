@@ -1,76 +1,82 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient();
+export class PhoneRepository {
+  private prisma: PrismaClient;
 
-export const getPhones = async () => {
-  return prisma.phone.findMany();
-};
-
-export const getPhoneById = async (id: number) => {
-  return prisma.phone.findUnique({ where: { id } });
-};
-
-export const getPhoneByNumber = async (number: string) => {
-  return prisma.phone.findUnique({ where: { number } });
-};
-
-export const createPhones = async (data: any[]) => {
-  return prisma.phone.createMany({ data });
-};
-
-export const updatePhone = async (id: number, data: any) => {
-  return prisma.phone.update({ where: { id }, data });
-};
-
-export const deletePhone = async (id: number) => {
-  return prisma.phone.delete({ where: { id } });
-};
-
-export const deleteAllPhones = async () => {
-  return prisma.phone.deleteMany();
-}
-
-export const getRandomPhoneByAppId = async (appId: number) => {
-  const phone = await prisma.phone.findFirst({
-    where: { appId },
-    orderBy: { updatedAt: 'asc' },
-  });
-
-  if (phone) {
-    const update = await prisma.phone.update({
-      where: { id: phone.id },
-      data: { updatedAt: new Date() },
-    });
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma
   }
 
-  return phone;
-};
+  async getPhones() {
+    return this.prisma.phone.findMany()
+  }
 
-export const updatePhones = async (data: { id: number, updateData: any }[]) => {
-  const updatePromises = data.map(phone =>
-    prisma.phone.update({
-      where: { id: phone.id },
-      data: phone.updateData,
+  async getPhoneById(id: number) {
+    return this.prisma.phone.findUnique({ where: { id } })
+  }
+
+  async getPhoneByNumber(number: string) {
+    return this.prisma.phone.findFirst({ where: { number } })
+  }
+
+  async createPhones(data: any[]) {
+    return this.prisma.phone.createMany({ data })
+  }
+
+  async updatePhone(id: number, data: any) {
+    return this.prisma.phone.update({ where: { id }, data })
+  }
+
+  async deletePhone(id: number) {
+    return this.prisma.phone.delete({ where: { id } })
+  }
+
+  async deleteAllPhones() {
+    return this.prisma.phone.deleteMany()
+  }
+
+  async getRandomPhoneByAppId(appId: number) {
+    const phone = await this.prisma.phone.findFirst({
+      where: { appId },
+      orderBy: { updatedAt: 'asc' }
     })
-  );
-  return Promise.all(updatePromises);
-};
 
-export const updateAppIdAllPhones = async (appId: number, phoneIds: number[]) => {
-  const batchSize = 1000; // Kích thước mỗi lô
-  const totalBatches = Math.ceil(phoneIds.length / batchSize);
+    if (phone) {
+      const update = await this.prisma.phone.update({
+        where: { id: phone.id },
+        data: { updatedAt: new Date() }
+      })
+    }
 
-  for (let i = 0; i < totalBatches; i++) {
-    const batch = phoneIds.slice(i * batchSize, (i + 1) * batchSize);
-    await prisma.phone.updateMany({
-      where: {
-        id: {
-          in: batch,
-        },
-      },
-      data: {
-        appId,
-      },
-    });
+    return phone
   }
-};
+
+  async updatePhones(data: { id: number; updateData: any }[]) {
+    const updatePromises = data.map((phone) =>
+      this.prisma.phone.update({
+        where: { id: phone.id },
+        data: phone.updateData
+      })
+    )
+    return Promise.all(updatePromises)
+  }
+
+  async updateAppIdAllPhones(appId: number, phoneIds: number[]) {
+    const batchSize = 1000 // Kích thước mỗi lô
+    const totalBatches = Math.ceil(phoneIds.length / batchSize)
+
+    for (let i = 0; i < totalBatches; i++) {
+      const batch = phoneIds.slice(i * batchSize, (i + 1) * batchSize)
+      await this.prisma.phone.updateMany({
+        where: {
+          id: {
+            in: batch
+          }
+        },
+        data: {
+          appId
+        }
+      })
+    }
+  }
+}
