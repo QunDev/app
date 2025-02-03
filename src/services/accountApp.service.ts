@@ -17,6 +17,10 @@ export class AccountAppService {
     return await this.accountAppRepository.createAccountApp(data)
   }
 
+  async createAccountAppMany(data: Pick<accountApp, 'userId' | 'appId'>[]) {
+    return this.accountAppRepository.createAccountAppMany(data);
+  }
+
   async getAccountAppById(id: number): Promise<accountApp | null> {
     const account = await this.accountAppRepository.getAccountAppById(id)
 
@@ -39,5 +43,9 @@ export class AccountAppService {
     }
 
     await this.accountAppRepository.deleteAccountApp(id)
+  }
+
+  async getAccountAppWhereSmsIsNull(appId: number, userId: number): Promise<accountApp | null> {
+    return await this.accountAppRepository.getAccountAppWhereSmsIsNull(appId, userId)
   }
 }

@@ -6,7 +6,7 @@ import {CREATED, OK} from "~/core/success.response.ts";
 import {BadRequest} from "~/core/error.response.ts";
 import {createAppSchema, updateAppSchema} from "~/validations/app.validation.ts";
 import {join} from "path";
-import {existsSync, mkdirSync, statSync, unlinkSync} from "fs";
+import {createReadStream, existsSync, mkdirSync, statSync, unlinkSync} from "fs";
 import {validateFileTypeAndSize} from "~/utils/file.utils.ts";
 import {v4 as uuidv4} from "uuid";
 import {fileProcessing} from "~/helper/fileProcessingQueue.helper.ts";
@@ -196,5 +196,29 @@ export class AppController {
         metadata: null
       }
     ).send(res)
+  }
+
+  async downloadApp(req: Request, res: Response) {
+    const id = parseInt(req.params.id)
+    if (isNaN(Number(id))) throw new BadRequest('Id must be a number')
+
+    const app = await appService.getApp(id)
+
+    if (!app) {
+      throw new BadRequest('App not found')
+    }
+
+    if (!app.filepath) {
+      throw new BadRequest('File not found')
+    }
+
+    const fileStream = createReadStream(app.filepath)
+
+    res.setHeader('Content-Disposition', `attachment; filename="${app.name}".apk`)
+    res.setHeader('Content-Type', 'application/octet-stream')
+
+    fileStream.pipe(res)
+
+    // res.download(app.filepath)
   }
 }

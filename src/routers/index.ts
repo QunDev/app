@@ -16,15 +16,16 @@ import userRoleRouter from '~/routers/userRole.router.ts'
 import authRouter from '~/routers/auth.router.ts'
 import { checkPermission } from '~/middlewares/checkPermission.middleware.ts'
 import { requireAuth } from '~/middlewares/auth.middleware.ts'
+import deviceRouter from "~/routers/device.router.ts";
 
 const router = express.Router()
 
 // check apiKey
 // router.use(apiKeyAuthMiddleware);
 // rate limiting
-router.use(apiKeyRateLimiter)
+// router.use(apiKeyRateLimiter)
 // check permission
-router.use(advancedIpMiddleware)
+// router.use(advancedIpMiddleware)
 
 router.use('/auth', authRouter)
 
@@ -44,5 +45,6 @@ router.use('/accountApps', accountAppRouter)
 router.use('/permission', permissionRouter)
 router.use('/rolePermission', rolePermissionRouter)
 router.use('/userRole', userRoleRouter)
+router.use('/devices', deviceRouter)
 
 export default router

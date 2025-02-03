@@ -1,7 +1,7 @@
 import { asyncHandler } from '~/helper/errorHandle.ts'
 import { NextFunction, Request, Response } from 'express'
 import { UNAUTHORIZED } from '~/core/error.response.ts'
-import { prisma } from '~/utils/prismaClient.ts'
+import prisma from '~/utils/prismaClient.ts'
 
 export function checkPermission(...requiredPermissions: string[]) {
   return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {

@@ -6,11 +6,11 @@ model App {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  phones         Phone[]
-  backups        Backup[]
-  accountApp     accountApp[]
-  interacts      interacts[]
-  interactScript interactScript[]
+  phones     Phone[]
+  backups    Backup[]
+  accountApp accountApp[]
+  interacts  interacts[]
+  ip         Ip[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

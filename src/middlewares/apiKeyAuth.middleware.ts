@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
 import { getApiKeyByKey } from '~/repositories/apiKey.repository.ts'
 import { ForbiddenError } from '~/core/error.response.ts'
+import {asyncHandler} from "~/helper/errorHandle.ts";
 
-export const apiKeyAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const apiKeyAuthMiddleware = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const apiKey = (req.headers['x-api-key'] as string) || req.query.apikey
 
   if (!apiKey) {
@@ -17,4 +18,4 @@ export const apiKeyAuthMiddleware = async (req: Request, res: Response, next: Ne
 
   req.apiKey = validApiKey
   next()
-}
+})

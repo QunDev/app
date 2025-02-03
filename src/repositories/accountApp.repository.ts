@@ -18,6 +18,12 @@ export class AccountAppRepository {
     })
   }
 
+  async createAccountAppMany(data: Pick<accountApp, 'userId' | 'appId'>[]) {
+    return this.prisma.accountApp.createMany({
+      data
+    })
+  }
+
   async getAccountAppById(id: number): Promise<accountApp | null> {
     return this.prisma.accountApp.findUnique({
       where: {id}
@@ -34,6 +40,16 @@ export class AccountAppRepository {
   async deleteAccountApp(id: number): Promise<accountApp> {
     return this.prisma.accountApp.delete({
       where: {id}
+    })
+  }
+
+  async getAccountAppWhereSmsIsNull(appId: number, userId: number): Promise<accountApp | null> {
+    return this.prisma.accountApp.findFirst({
+      where: {
+        userId,
+        appId,
+        sms: null
+      }
     })
   }
 }

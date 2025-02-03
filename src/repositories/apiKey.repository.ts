@@ -12,8 +12,11 @@ export class ApiKeyRepository {
     return this.prisma.apiKey.create({data})
   }
 
-  async getApiKeyByKey(key: string): Promise<ApiKey | null> {
-    return this.prisma.apiKey.findUnique({where: {key}})
+  async getApiKeyByKey(key: string): Promise<Pick<ApiKey, 'userId' | 'status'> | null> {
+    return this.prisma.apiKey.findUnique({
+      where: {key},
+      select: {userId: true, status: true}
+    })
   }
 
   async revokeApiKey(key: string): Promise<ApiKey> {

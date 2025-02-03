@@ -1,0 +1,16 @@
+-- CreateTable
+CREATE TABLE `Ip` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `ip` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `appId` INTEGER NOT NULL,
+
+    UNIQUE INDEX `Ip_ip_key`(`ip`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Ip` ADD CONSTRAINT `Ip_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Ip` ADD CONSTRAINT `Ip_appId_fkey` FOREIGN KEY (`appId`) REFERENCES `App`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

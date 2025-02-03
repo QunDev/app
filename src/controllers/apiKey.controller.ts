@@ -13,7 +13,10 @@ const apiKeyService = new ApiKeyService(apiKeyRepository)
 export class ApiKeyController {
   async generateApiKey(req: Request, res: Response) {
     const validatedData = createApiKeySchema.parse(req.body)
-    const apiKey = await apiKeyService.createApiKey(validatedData)
+    if (!req.user.userId) {
+      throw new BadRequest('User not found')
+    }
+    const apiKey = await apiKeyService.createApiKey({...validatedData, userId: req.user.userId})
 
     new CREATED({message: 'API key generated successfully', metadata: apiKey}).send(res)
   }

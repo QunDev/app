@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { BadRequest } from '~/core/error.response.ts'
+import {asyncHandler} from "~/helper/errorHandle.ts";
 
 // Regex cho các dải IP mạng LAN
 const allowedLanIps = [
@@ -28,7 +29,7 @@ const normalizeIp = (ip: string): string => {
  * @param res - Đáp ứng HTTP
  * @param next - Hàm gọi middleware tiếp theo
  */
-const advancedIpMiddleware = (req: Request, res: Response, next: NextFunction) => {
+const advancedIpMiddleware = asyncHandler((req: Request, res: Response, next: NextFunction) => {
   const rawIp = req.ip || req.connection.remoteAddress || ''
   const clientIp = normalizeIp(rawIp) // Chuẩn hóa IP
 
@@ -42,6 +43,6 @@ const advancedIpMiddleware = (req: Request, res: Response, next: NextFunction) =
 
   // console.info(`[ACCESS_ALLOWED] Request accepted from IP: ${clientIp}`);
   next()
-}
+})
 
 export default advancedIpMiddleware

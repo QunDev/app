@@ -22,7 +22,6 @@ export class PhoneService {
     if (data.length > 200000) {
       throw new UnprocessableEntity('Cannot insert more than 100,000 records at once')
     }
-    console.log(`Phones to insert: ${data[0]}`)
 
     // Check for duplicate phone numbers
     const existingPhones = await this.phoneRepository.getPhones()

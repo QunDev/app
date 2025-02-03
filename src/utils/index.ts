@@ -8,3 +8,5 @@ export const getInfoData = ({ fileds = [], object = {} }: { fileds: string[]; ob
 export function hashFunction(plaintext: string): string {
   return crypto.createHash('sha256').update(plaintext).digest('hex')
 }
+
+export const arrayAccount = [];

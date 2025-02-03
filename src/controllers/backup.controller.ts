@@ -198,7 +198,7 @@ export class BackupController {
     const filepath = join(__dirname, '..', 'uploads', 'backups', app.name, backup.filename)
     const fileStream = createReadStream(filepath)
 
-    res.setHeader('Content-Disposition', `attachment; filename="${backup.filename}"`)
+    res.setHeader('Content-Disposition', `attachment; filename="${backup.filename}.tar.gz"`)
     res.setHeader('Content-Type', 'application/octet-stream')
 
     fileStream.pipe(res)

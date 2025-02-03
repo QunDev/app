@@ -1,7 +1,7 @@
 model interacts {
   id        Int       @id @default(autoincrement())
   name      String?
-  is_active Boolean   @default(false)
+  is_start  Boolean   @default(false)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   lastUsed  DateTime?
@@ -11,5 +11,5 @@ model interacts {
   appId  Int
   app    App  @relation(fields: [appId], references: [id], onDelete: Cascade)
 
-  interactScript interactScript[]
+  Script Script[]
 }

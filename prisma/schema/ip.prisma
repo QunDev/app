@@ -1,0 +1,10 @@
+model Ip {
+  id        Int    @id @default(autoincrement())
+  ip        String
+  countUsed Int    @default(0)
+  userId    Int
+  appId     Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  app  App  @relation(fields: [appId], references: [id], onDelete: Cascade)
+}

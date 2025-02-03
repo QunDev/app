@@ -5,7 +5,7 @@ model Script {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  interactScriptId Int?
-  interactScript   interactScript? @relation(fields: [interactScriptId], references: [id], onDelete: SetNull)
-  ScriptData       ScriptData[]
+  interactId Int?
+  interact   interacts?   @relation(fields: [interactId], references: [id], onDelete: SetNull)
+  ScriptData ScriptData[]
 }
