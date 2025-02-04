@@ -13,7 +13,7 @@ const app = express()
 app.use(morgan('dev'))
 app.use(helmet())
 app.use(compression())
-app.use(express.json({ limit: '500mb' }))
+app.use(express.json({ limit: '900mb' }))
 app.use(express.urlencoded({ extended: true }))
 
 // Middleware to handle multipart/form-data
