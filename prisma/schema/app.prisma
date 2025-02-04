@@ -7,6 +7,7 @@ model App {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   phones     Phone[]
+  emails     Email[]
   backups    Backup[]
   accountApp accountApp[]
   interacts  interacts[]

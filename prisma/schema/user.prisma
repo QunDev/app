@@ -9,6 +9,7 @@ model User {
   apiKeys       ApiKey[]
   apps          App[]
   phones        Phone[]
+  emails        Email[]
   countryPhones CountryPhone[]
   roles         UserRole[]
   Backup        Backup[]
