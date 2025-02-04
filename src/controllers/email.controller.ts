@@ -58,4 +58,9 @@ export class EmailController {
     await emailService.deleteAllEmails()
     new OK({message: 'All emails deleted successfully', metadata: null}).send(res)
   }
+
+  async getRandomEmail(req: Request, res: Response) {
+    const email = await emailService.getRandomEmail();
+    new OK({ message: 'Random email retrieved successfully', metadata: email }).send(res);
+  }
 }

@@ -50,4 +50,12 @@ export class EmailService {
   async deleteAllEmails() {
     return this.emailRepository.deleteAllEmails()
   }
+
+  async getRandomEmail() {
+    const email = await this.emailRepository.getRandomEmail();
+    if (!email) {
+      throw new NotFoundError('No emails available');
+    }
+    return email;
+  }
 }

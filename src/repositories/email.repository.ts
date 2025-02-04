@@ -36,4 +36,19 @@ export class EmailRepository {
   async deleteAllEmails() {
     return this.prisma.email.deleteMany()
   }
+
+  async getRandomEmail() {
+    const email = await this.prisma.email.findFirst({
+      orderBy: { updatedAt: 'asc' }
+    });
+
+    if (email) {
+      await this.prisma.email.update({
+        where: { id: email.id },
+        data: { updatedAt: new Date() }
+      });
+    }
+
+    return email;
+  }
 }

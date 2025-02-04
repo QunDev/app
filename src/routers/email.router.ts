@@ -11,5 +11,6 @@ router.post('/', asyncHandler(emailController.createEmails))
 router.put('/:id', asyncHandler(emailController.updateEmail))
 router.delete('/:id', asyncHandler(emailController.deleteEmail))
 router.delete('/', asyncHandler(emailController.deleteAllEmails))
+router.get('/random', asyncHandler(emailController.getRandomEmail))
 
 export default router
