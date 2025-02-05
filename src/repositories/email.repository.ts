@@ -17,7 +17,7 @@ export class EmailRepository {
 
   async getEmailsByAddresses(addresses: string[]) {
     return this.prisma.email.findMany({
-      where: { address: { in: addresses } }
+      where: { address: { in: email } }
     })
   }
 
@@ -44,17 +44,15 @@ export class EmailRepository {
         where: { appId },
         orderBy: { updatedAt: 'asc' }
       });
-      console.log(email ? email.address : 'No email found');
 
       if (!email) return email; // Không có email nào phù hợp
 
       // Kiểm tra xem email này có tồn tại trong bảng accountApp hay không
       const existingAccount = await this.prisma.accountApp.findFirst({
-        where: { email: email.address, appId }
+        where: { email: email.email, appId }
       });
 
       if (!existingAccount) {
-        console.log(`Found email ${email.address} for appId ${appId}`);
         // Nếu email chưa tồn tại trong bảng accountApp, cập nhật updatedAt và trả về
         await this.prisma.email.update({
           where: { id: email.id },
