@@ -37,8 +37,9 @@ export class EmailRepository {
     return this.prisma.email.deleteMany()
   }
 
-  async getRandomEmail() {
+  async getRandomEmailByAppId(appId: number) {
     const email = await this.prisma.email.findFirst({
+      where: { appId },
       orderBy: { updatedAt: 'asc' }
     });
 

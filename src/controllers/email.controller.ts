@@ -59,8 +59,12 @@ export class EmailController {
     new OK({message: 'All emails deleted successfully', metadata: null}).send(res)
   }
 
-  async getRandomEmail(req: Request, res: Response) {
-    const email = await emailService.getRandomEmail();
+  async getRandomEmailByAppId(req: Request, res: Response) {
+    const appId = Number(req.params.appId);
+
+    if (isNaN(appId)) throw new UnprocessableEntity('Invalid app ID');
+
+    const email = await emailService.getRandomEmailByAppId(appId);
     new OK({ message: 'Random email retrieved successfully', metadata: email }).send(res);
   }
 }

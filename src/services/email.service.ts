@@ -51,10 +51,12 @@ export class EmailService {
     return this.emailRepository.deleteAllEmails()
   }
 
-  async getRandomEmail() {
-    const email = await this.emailRepository.getRandomEmail();
+  async getRandomEmailByAppId(appId: number) {
+    if (isNaN(appId)) throw new UnprocessableEntity('Invalid app ID');
+
+    const email = await this.emailRepository.getRandomEmailByAppId(appId);
     if (!email) {
-      throw new NotFoundError('No emails available');
+      throw new NotFoundError('No emails available for the given appId');
     }
     return email;
   }
