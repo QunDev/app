@@ -45,7 +45,7 @@ export class EmailRepository {
         orderBy: { updatedAt: 'asc' }
       });
 
-      if (!email) return null; // Không có email nào phù hợp
+      if (!email) return email; // Không có email nào phù hợp
 
       // Kiểm tra xem email này có tồn tại trong bảng accountApp hay không
       const existingAccount = await this.prisma.accountApp.findFirst({
