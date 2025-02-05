@@ -38,18 +38,30 @@ export class EmailRepository {
   }
 
   async getRandomEmailByAppId(appId: number) {
-    const email = await this.prisma.email.findFirst({
-      where: { appId },
-      orderBy: { updatedAt: 'asc' }
-    });
-
-    if (email) {
-      await this.prisma.email.update({
-        where: { id: email.id },
-        data: { updatedAt: new Date() }
+    while (true) {
+      // Lấy email có `appId` và sắp xếp theo `updatedAt ASC`
+      const email = await this.prisma.email.findFirst({
+        where: { appId },
+        orderBy: { updatedAt: 'asc' }
       });
-    }
 
-    return email;
+      if (!email) return null; // Không có email nào phù hợp
+
+      // Kiểm tra xem email này có tồn tại trong bảng accountApp hay không
+      const existingAccount = await this.prisma.accountApp.findFirst({
+        where: { email: email.address, appId }
+      });
+
+      if (!existingAccount) {
+        // Nếu email chưa tồn tại trong bảng accountApp, cập nhật updatedAt và trả về
+        await this.prisma.email.update({
+          where: { id: email.id },
+          data: { updatedAt: new Date() }
+        });
+        return email;
+      }
+
+      // Nếu email đã tồn tại, tiếp tục vòng lặp để lấy email khác
+    }
   }
 }

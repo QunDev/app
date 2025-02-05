@@ -56,7 +56,7 @@ export class EmailService {
 
     const email = await this.emailRepository.getRandomEmailByAppId(appId);
     if (!email) {
-      throw new NotFoundError('No emails available for the given appId');
+      throw new NotFoundError('No valid emails available for the given appId');
     }
     return email;
   }
