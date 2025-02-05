@@ -44,6 +44,7 @@ export class EmailRepository {
         where: { appId },
         orderBy: { updatedAt: 'asc' }
       });
+      console.log(email ? email.address : 'No email found');
 
       if (!email) return email; // Không có email nào phù hợp
 
@@ -53,6 +54,7 @@ export class EmailRepository {
       });
 
       if (!existingAccount) {
+        console.log(`Found email ${email.address} for appId ${appId}`);
         // Nếu email chưa tồn tại trong bảng accountApp, cập nhật updatedAt và trả về
         await this.prisma.email.update({
           where: { id: email.id },
