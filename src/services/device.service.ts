@@ -8,6 +8,10 @@ export class DeviceService {
     this.deviceRepository = deviceRepository
   }
 
+  async getDevices() {
+    return this.deviceRepository.getDevices()
+  }
+
   async create(data: Pick<device, 'userId' | 'deviceId'>) {
     return this.deviceRepository.create(data)
   }

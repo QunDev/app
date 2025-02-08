@@ -7,6 +7,10 @@ export class DeviceRepository {
     this.prisma = prisma
   }
 
+  async getDevices() {
+    return this.prisma.device.findMany();
+  }
+
   async create(data: Pick<device, 'userId' | 'deviceId'>) {
     return this.prisma.device.create({ data })
   }

@@ -10,6 +10,20 @@ const deviceRepository = new DeviceRepository(prisma);
 const deviceService = new DeviceService(deviceRepository);
 
 export class DeviceController {
+  async getDevices(req: Request, res: Response) {
+    const devices = await deviceService.getDevices();
+    if (!devices.length) {
+      new OK({
+        message: 'No devices found',
+        metadata: []
+      }).send(res);
+    }
+    new OK({
+      message: 'Devices found',
+      metadata: devices
+    }).send(res);
+  }
+
   async create(req: Request, res: Response) {
     const {deviceId} = createDeviceSchema.parse(req.body);
     const userId = req.user.userId;
