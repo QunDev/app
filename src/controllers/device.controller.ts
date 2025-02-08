@@ -44,4 +44,15 @@ export class DeviceController {
       metadata: device
     }).send(res);
   }
+
+  async updateDevice(req: Request, res: Response) {
+    const {deviceId} = req.params;
+    const data = req.body;
+    if (!deviceId) throw new UnprocessableEntity('Device ID is required');
+    const device = await deviceService.updateDevice(deviceId, data);
+    new OK({
+      message: 'Device updated successfully',
+      metadata: device
+    }).send(res);
+  }
 }

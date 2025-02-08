@@ -18,4 +18,8 @@ export class DeviceRepository {
   async findByDeviceId(deviceId: string) {
     return this.prisma.device.findUnique({ where: { deviceId } })
   }
+
+  async updateDevice(deviceId: string, data: Partial<device>) {
+    return this.prisma.device.update({ where: { deviceId }, data })
+  }
 }

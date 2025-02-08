@@ -19,4 +19,8 @@ export class DeviceService {
   async findByDeviceId(deviceId: string) {
     return this.deviceRepository.findByDeviceId(deviceId)
   }
+
+  async updateDevice(deviceId: string, data: Partial<device>) {
+    return this.deviceRepository.updateDevice(deviceId, data)
+  }
 }

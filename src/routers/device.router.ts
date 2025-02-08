@@ -9,5 +9,6 @@ const deviceController = new DeviceController();
 router.get('/', asyncHandler(deviceController.getDevices));
 router.get('/:deviceId', asyncHandler(deviceController.findByDeviceId));
 router.post('/', asyncHandler(deviceController.create));
+router.put('/:deviceId', asyncHandler(deviceController.updateDevice));
 
 export default router;
