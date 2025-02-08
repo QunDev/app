@@ -7,7 +7,7 @@ const router = express();
 const deviceController = new DeviceController();
 
 router.get('/', asyncHandler(deviceController.getDevices));
-router.get('/active', asyncHandler(deviceController.updateIsActiveDevice));
+router.get('/active/:deviceId', asyncHandler(deviceController.updateIsActiveDevice));
 router.get('/:deviceId', asyncHandler(deviceController.findByDeviceId));
 router.post('/', asyncHandler(deviceController.create));
 router.put('/:deviceId', asyncHandler(deviceController.updateDevice));
