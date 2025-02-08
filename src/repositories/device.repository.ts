@@ -22,4 +22,8 @@ export class DeviceRepository {
   async updateDevice(deviceId: string, data: Partial<device>) {
     return this.prisma.device.update({ where: { deviceId }, data })
   }
+
+  async updateIsActiveDevice(deviceId: string) {
+    return this.prisma.device.update({ where: { deviceId }, data: { is_active: true } })
+  }
 }

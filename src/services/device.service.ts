@@ -23,4 +23,8 @@ export class DeviceService {
   async updateDevice(deviceId: string, data: Partial<device>) {
     return this.deviceRepository.updateDevice(deviceId, data)
   }
+
+  async updateIsActiveDevice(deviceId: string) {
+    return this.deviceRepository.updateIsActiveDevice(deviceId)
+  }
 }
