@@ -22,7 +22,8 @@ export class IpController {
 
   async createIp(req: Request, res: Response) {
     const newIp = await ipService.createIp(req.body);
-    new CREATED({ message: "IP created successfully", metadata: newIp }).send(res);
+    const userId = req.user.id;
+    new CREATED({ message: "IP created successfully", metadata: {...newIp, userId} }).send(res);
   }
 
   async updateIp(req: Request, res: Response) {
@@ -39,7 +40,8 @@ export class IpController {
 
   async checkIpUsage(req: Request, res: Response) {
     const ip = req.params.ip;
-    const result = await ipService.checkIpUsage(ip);
+    const appId = req.params.appId;
+    const result = await ipService.checkIpUsage(ip, Number(appId));
     new OK({ message: result.message, metadata: result }).send(res);
   }
 }

@@ -15,8 +15,8 @@ export class IpRepository {
     return this.prisma.ip.findUnique({ where: { id } });
   }
 
-  async getIpByAddress(ip: string) {
-    return this.prisma.ip.findUnique({ where: { ip } });
+  async getIpByAddress(ip: string, appId: number) {
+    return this.prisma.ip.findFirst({ where: { ip, appId } });
   }
 
   async createIp(data: any) {
@@ -31,13 +31,14 @@ export class IpRepository {
     return this.prisma.ip.delete({ where: { id } });
   }
 
-  async checkIpUsage(ip: string) {
+  async checkIpUsage(ip: string, appId: number) {
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
     return this.prisma.ip.findFirst({
       where: {
         ip,
+        appId,
         countUsed: {
           gte: 5,
         },
@@ -48,9 +49,9 @@ export class IpRepository {
     });
   }
 
-  async incrementIpCount(ip: string) {
+  async incrementIpCount(ip: string, appId: number) {
     return this.prisma.ip.update({
-      where: { ip },
+      where: { ip, appId },
       data: {
         countUsed: {
           increment: 1,

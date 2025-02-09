@@ -1,5 +1,6 @@
 import { IpRepository } from "~/repositories/ip.repository.ts";
 import { NotFoundError, UnprocessableEntity } from "~/core/error.response.ts";
+import app from "~/app.ts";
 
 export class IpService {
   private ipRepository: IpRepository;
@@ -34,10 +35,10 @@ export class IpService {
     return this.ipRepository.deleteIp(id);
   }
 
-  async checkIpUsage(ip: string) {
+  async checkIpUsage(ip: string, appId: number) {
     if (!ip) throw new UnprocessableEntity("IP address is required");
 
-    const ipData = await this.ipRepository.getIpByAddress(ip);
+    const ipData = await this.ipRepository.getIpByAddress(ip, appId);
 
     if (!ipData) {
       return { status: "not_found", message: "IP does not exist" };
@@ -51,7 +52,7 @@ export class IpService {
     }
 
     // Nếu chưa vượt quá 5 lần, tăng countUsed + 1
-    await this.ipRepository.incrementIpCount(ip);
+    await this.ipRepository.incrementIpCount(ip, appId);
 
     return { status: "allowed", message: "IP usage is within limit. Count incremented." };
   }

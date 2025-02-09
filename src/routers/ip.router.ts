@@ -6,7 +6,7 @@ const router = express.Router();
 const ipController = new IpController();
 
 router.get("/", asyncHandler(ipController.getAllIps));
-router.get("/check/:ip", asyncHandler(ipController.checkIpUsage));
+router.get("/check/:appId/:ip", asyncHandler(ipController.checkIpUsage));
 router.get("/:id", asyncHandler(ipController.getIpById));
 router.post("/", asyncHandler(ipController.createIp));
 router.put("/:id", asyncHandler(ipController.updateIp));
