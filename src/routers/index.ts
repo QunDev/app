@@ -18,6 +18,7 @@ import { checkPermission } from '~/middlewares/checkPermission.middleware.ts'
 import { requireAuth } from '~/middlewares/auth.middleware.ts'
 import deviceRouter from "~/routers/device.router.ts";
 import emailRouter from "~/routers/email.router.ts";
+import IpRouter from "~/routers/ip.router.ts";
 
 const router = express.Router()
 
@@ -48,5 +49,6 @@ router.use('/permission', permissionRouter)
 router.use('/rolePermission', rolePermissionRouter)
 router.use('/userRole', userRoleRouter)
 router.use('/devices', deviceRouter)
+router.use('/ips', IpRouter)
 
 export default router
