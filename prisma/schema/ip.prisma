@@ -7,6 +7,6 @@ model Ip {
 
   lastUsed DateTime?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  app  App  @relation(fields: [appId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  app  App?  @relation(fields: [appId], references: [id], onDelete: Cascade)
 }
