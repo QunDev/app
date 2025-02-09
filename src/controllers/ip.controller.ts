@@ -21,10 +21,10 @@ export class IpController {
   }
 
   async createIp(req: Request, res: Response) {
-    const newIp = await ipService.createIp(req.body);
     const userId = req.user.id;
+    const newIp = await ipService.createIp({ ...req.body, userId });
     console.log(userId);
-    new CREATED({ message: "IP created successfully", metadata: {...newIp, user: userId} }).send(res);
+    new CREATED({ message: "IP created successfully", metadata: newIp }).send(res);
   }
 
   async updateIp(req: Request, res: Response) {
