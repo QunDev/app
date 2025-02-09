@@ -21,7 +21,7 @@ export class IpController {
   }
 
   async createIp(req: Request, res: Response) {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     console.log('user: ' + userId);
     const newIp = await ipService.createIp({ userId,...req.body });
     console.log(userId);
