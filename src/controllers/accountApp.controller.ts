@@ -49,7 +49,11 @@ export class AccountAppController {
   async listAccountApps(req: Request, res: Response) {
     const accountApps = await accountAppService.getAllAccountApps()
 
-    new OK({message: 'AccountApps retrieved successfully', metadata: accountApps}).send(res)
+    const arrayAccountApps = accountApps.map(accountApp => {
+      return `${accountApp.email}|${accountApp.password}|${accountApp.phone}|${accountApp.sms}`
+    })
+
+    new OK({message: 'AccountApps retrieved successfully', metadata: arrayAccountApps}).send(res)
   }
 
   async createAccountApp(req: Request, res: Response) {
