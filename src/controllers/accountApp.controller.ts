@@ -11,6 +11,8 @@ import {AppRepository} from "~/repositories/app.repository.ts";
 import {PrismaService} from '~/prisma/prisma.service'
 import {DeviceRepository} from "~/repositories/device.repository.ts";
 import {DeviceService} from "~/services/device.service.ts";
+import {join} from 'path'
+import fs, {createReadStream, existsSync, mkdirSync} from "fs";
 
 const prismaClient = new PrismaService()
 const accountAppRepository = new AccountAppRepository(prismaClient)
@@ -55,17 +57,28 @@ export class AccountAppController {
       return;
     }
 
-    // Cập nhật account.use = true cho tất cả tài khoản được lấy
     await Promise.all(accounts.map(account =>
       accountAppService.updateAccountApp(account.id, { used: true })
     ));
 
-    // Định dạng dữ liệu đầu ra
     const formattedAccounts = accounts.map(account =>
       `${account.email}|${account.password}|${account.phone}|${account.sms}`
     );
 
-    new OK({ message: "AccountApps retrieved successfully", metadata: formattedAccounts }).send(res);
+    const filePath = join(__dirname, '..', 'data', 'accounts', `${appName}.txt`);
+
+    if (!existsSync(filePath)) {
+      mkdirSync(filePath, {recursive: true})
+    }
+
+    fs.writeFileSync(filePath, formattedAccounts.join("\n"), "utf-8");
+
+    const fileStream = createReadStream(filePath)
+
+    res.setHeader('Content-Disposition', `attachment; filename="accounts.txt"`)
+    res.setHeader('Content-Type', 'application/octet-stream')
+
+    fileStream.pipe(res)
   }
 
   async createAccountApp(req: Request, res: Response) {
