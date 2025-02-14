@@ -65,17 +65,18 @@ export class AccountAppController {
       `${account.email}|${account.password}|${account.phone}|${account.sms}`
     );
 
-    const filePath = join(__dirname, '..', 'data', 'accounts', `${appName}.txt`);
+    const dirPath = join(__dirname, 'data', 'accounts');
+    const filePath = join(dirPath, `${appName || 'accounts'}.txt`);
 
-    if (!existsSync(filePath)) {
-      mkdirSync(filePath, {recursive: true})
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
     }
 
     fs.writeFileSync(filePath, formattedAccounts.join("\n"), "utf-8");
 
     const fileStream = createReadStream(filePath)
 
-    res.setHeader('Content-Disposition', `attachment; filename="accounts.txt"`)
+    res.setHeader('Content-Disposition', `attachment; filename="${appName || 'accounts'}.txt"`)
     res.setHeader('Content-Type', 'application/octet-stream')
 
     fileStream.pipe(res)
