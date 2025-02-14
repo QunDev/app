@@ -47,11 +47,12 @@ export class AccountAppController {
   }
 
   async listAccountApps(req: Request, res: Response) {
-    const { appId } = req.query;
-    const accounts = await accountAppService.getAllAccountApps(appId ? Number(appId) : undefined);
+    const { appName } = req.query;
+    const accounts = await accountAppService.getAllAccountApps(appName ? appName.toString() : undefined);
 
     if (accounts.length === 0) {
-      return res.status(404).json({ message: "No accounts found" });
+      new OK({ message: "No accounts found", metadata: [] }).send(res);
+      return;
     }
 
     // Cập nhật account.use = true cho tất cả tài khoản được lấy

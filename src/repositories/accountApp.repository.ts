@@ -8,9 +8,14 @@ export class AccountAppRepository {
     this.prisma = prisma
   }
 
-  async getAllAccountApps(appId?: number): Promise<accountApp[]> {
-    const whereClause = appId ? { appId } : {};
-    return this.prisma.accountApp.findMany({ where: whereClause });
+  async getAllAccountApps(appName?: string): Promise<accountApp[]> {
+    const whereClause = appName ? { app: { name: appName } } : {};
+    return this.prisma.accountApp.findMany({
+      where: {
+        ...whereClause,
+        used: false
+      }
+    });
   }
 
   async createAccountApp(data: Pick<accountApp, 'userId' | 'appId'>): Promise<accountApp> {
