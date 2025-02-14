@@ -47,13 +47,24 @@ export class AccountAppController {
   }
 
   async listAccountApps(req: Request, res: Response) {
-    const accountApps = await accountAppService.getAllAccountApps()
+    const { appId } = req.query;
+    const accounts = await accountAppService.getAllAccountApps(appId ? Number(appId) : undefined);
 
-    const arrayAccountApps = accountApps.map(accountApp => {
-      return `${accountApp.email}|${accountApp.password}|${accountApp.phone}|${accountApp.sms}`
-    })
+    if (accounts.length === 0) {
+      return res.status(404).json({ message: "No accounts found" });
+    }
 
-    new OK({message: 'AccountApps retrieved successfully', metadata: arrayAccountApps}).send(res)
+    // Cập nhật account.use = true cho tất cả tài khoản được lấy
+    await Promise.all(accounts.map(account =>
+      accountAppService.updateAccountApp(account.id, { used: true })
+    ));
+
+    // Định dạng dữ liệu đầu ra
+    const formattedAccounts = accounts.map(account =>
+      `${account.email}|${account.password}|${account.phone}|${account.sms}`
+    );
+
+    new OK({ message: "AccountApps retrieved successfully", metadata: formattedAccounts }).send(res);
   }
 
   async createAccountApp(req: Request, res: Response) {

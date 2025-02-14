@@ -9,8 +9,8 @@ export class AccountAppService {
     this.accountAppRepository = accountAppRepository
   }
 
-  async getAllAccountApps(): Promise<accountApp[]> {
-    return await this.accountAppRepository.getAllAccountApps()
+  async getAllAccountApps(appId?: number): Promise<accountApp[]> {
+    return await this.accountAppRepository.getAllAccountApps(appId);
   }
 
   async createAccountApp(data: Pick<accountApp, 'userId' | 'appId'>): Promise<accountApp> {
