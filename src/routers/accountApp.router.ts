@@ -6,7 +6,7 @@ const router = express.Router()
 
 const accountAppController = new AccountAppController()
 
-router.get('/getall/:appId', asyncHandler(accountAppController.listAccountApps))
+router.get('/getall', asyncHandler(accountAppController.listAccountApps))
 router.post('/', asyncHandler(accountAppController.createAccountApp))
 router.post('/many', asyncHandler(accountAppController.createAccountAppMany))
 router.get('/sms-null/:appid/:userid', asyncHandler(accountAppController.getAccountAppWhereSmsIsNull))
