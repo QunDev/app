@@ -21,6 +21,21 @@ export class DeviceRepository {
       select: {
         countryPhones: {
           select: {
+            device: {
+              select: {
+                name: true,
+                proxy: true,
+                wifi: true,
+                passwordWifi: true,
+                deviceId: true,
+                userId: true,
+                is_active: true,
+                is_online: true,
+                is_start: true,
+                lastOnline: true,
+                createdAt: true,
+              }
+            },
             countryPhone: {
               select: {
                 country: true,
