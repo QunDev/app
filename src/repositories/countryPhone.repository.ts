@@ -15,6 +15,16 @@ export class CountryPhoneRepository {
     return this.prisma.countryPhone.findUnique({ where: { id } })
   }
 
+  async getCountryPhoneByDeviceId(deviceId: number) {
+    return this.prisma.countryPhone.findFirst({
+      where: {
+        device: {
+          id: deviceId
+        }
+      }
+    })
+  }
+
   async getCountryPhoneByNumberCode(numberCode: string) {
     return this.prisma.countryPhone.findFirst({ where: { numberCode } })
   }
