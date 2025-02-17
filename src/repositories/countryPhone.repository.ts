@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import {PrismaClient} from '@prisma/client'
 
 export class CountryPhoneRepository {
   private readonly prisma: PrismaClient
@@ -12,32 +12,26 @@ export class CountryPhoneRepository {
   }
 
   async getCountryPhoneById(id: number) {
-    return this.prisma.countryPhone.findUnique({ where: { id } })
-  }
-
-  async getCountryPhoneByDeviceId(deviceId: number) {
     return this.prisma.countryPhone.findFirst({
       where: {
-        device: {
-          id: deviceId
-        }
+
       }
     })
   }
 
   async getCountryPhoneByNumberCode(numberCode: string) {
-    return this.prisma.countryPhone.findFirst({ where: { numberCode } })
+    return this.prisma.countryPhone.findFirst({where: {numberCode}})
   }
 
   async createCountryPhone(data: any) {
-    return this.prisma.countryPhone.create({ data })
+    return this.prisma.countryPhone.create({data})
   }
 
   async updateCountryPhone(id: number, data: any) {
-    return this.prisma.countryPhone.update({ where: { id }, data })
+    return this.prisma.countryPhone.update({where: {id}, data})
   }
 
   async deleteCountryPhone(id: number) {
-    return this.prisma.countryPhone.delete({ where: { id } })
+    return this.prisma.countryPhone.delete({where: {id}})
   }
 }

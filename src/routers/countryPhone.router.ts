@@ -7,7 +7,6 @@ const router = express.Router()
 const countryPhoneController = new CountryPhoneController()
 
 router.get('/', asyncHandler(countryPhoneController.getCountryPhones))
-router.get('/device/:id', asyncHandler(countryPhoneController.getCountryPhoneByDeviceId))
 router.get('/:id', asyncHandler(countryPhoneController.getCountryPhone))
 router.post('/', asyncHandler(countryPhoneController.createCountryPhone))
 router.put('/:id', asyncHandler(countryPhoneController.updateCountryPhone))

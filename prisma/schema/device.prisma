@@ -13,6 +13,6 @@ model device {
   updatedAt    DateTime  @updatedAt
 
   userId        Int
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  countryPhones CountryPhone[]
+  user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  countryPhones CountryPhoneDevice[]
 }

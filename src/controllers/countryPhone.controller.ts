@@ -16,12 +16,6 @@ export class CountryPhoneController {
     new OK({ message: 'Country phones retrieved successfully', metadata: countryPhones }).send(res)
   }
 
-  async getCountryPhoneByDeviceId(req: Request, res: Response, next: NextFunction) {
-    if (isNaN(Number(req.params.id))) throw new BadRequest('Invalid device ID')
-    const countryPhone = await countryPhoneService.getCountryPhoneByDeviceId(Number(req.params.id))
-    new OK({ message: 'Country phone retrieved successfully', metadata: countryPhone }).send(res)
-  }
-
   async getCountryPhone(req: Request, res: Response, next: NextFunction) {
     if (isNaN(Number(req.params.id))) throw new BadRequest('Invalid country phone ID')
     const countryPhone = await countryPhoneService.getCountryPhone(Number(req.params.id))

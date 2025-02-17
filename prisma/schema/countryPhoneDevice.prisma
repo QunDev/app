@@ -1,0 +1,9 @@
+model CountryPhoneDevice {
+  id             Int          @id @default(autoincrement())
+  countryPhone   CountryPhone @relation(fields: [countryPhoneId], references: [id])
+  countryPhoneId Int
+  device         device       @relation(fields: [deviceId], references: [id])
+  deviceId       Int
+
+  @@unique([deviceId, countryPhoneId])
+}

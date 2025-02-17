@@ -20,10 +20,6 @@ export class CountryPhoneService {
     return countryPhone
   }
 
-  async getCountryPhoneByDeviceId(deviceId: number) {
-    return this.countryPhoneRepository.getCountryPhoneByDeviceId(deviceId)
-  }
-
   async createNewCountryPhone(data: any) {
     const { country, numberCode } = data
 

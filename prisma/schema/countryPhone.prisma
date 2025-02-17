@@ -5,9 +5,8 @@ model CountryPhone {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  phones   Phone[]
-  userId   Int?
-  user     User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  deviceId Int?
-  device   device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  phones  Phone[]
+  userId  Int?
+  user    User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  devices CountryPhoneDevice[]
 }

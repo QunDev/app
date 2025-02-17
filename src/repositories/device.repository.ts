@@ -12,18 +12,35 @@ export class DeviceRepository {
   }
 
   async create(data: Pick<device, 'userId' | 'deviceId'>) {
-    return this.prisma.device.create({ data })
+    return this.prisma.device.create({data})
   }
 
   async findByDeviceId(deviceId: string) {
-    return this.prisma.device.findUnique({ where: { deviceId } })
+    return this.prisma.device.findUnique({
+      where: {deviceId},
+      select: {
+        countryPhones: {
+          select: {
+            countryPhone: {
+              select: {
+                country: true,
+                numberCode: true
+              }
+            }
+          }
+        }
+      }
+    })
   }
 
   async updateDevice(deviceId: string, data: Partial<device>) {
-    return this.prisma.device.update({ where: { deviceId }, data })
+    return this.prisma.device.update({where: {deviceId}, data})
   }
 
-  async updateIsActiveDevice(deviceId: string) {
-    return this.prisma.device.update({ where: { deviceId }, data: { is_active: true } })
+  async updateIsActiveDevice(deviceId
+                             :
+                             string
+  ) {
+    return this.prisma.device.update({where: {deviceId}, data: {is_active: true}})
   }
 }
