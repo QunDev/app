@@ -12,6 +12,7 @@ model App {
   accountApp accountApp[]
   interacts  interacts[]
   ip         Ip[]
+  devices    AppDevice[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

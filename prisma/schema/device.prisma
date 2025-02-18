@@ -15,4 +15,5 @@ model device {
   userId        Int
   user          User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   countryPhones CountryPhoneDevice[]
+  apps          AppDevice[]
 }

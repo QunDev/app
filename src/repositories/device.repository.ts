@@ -28,6 +28,16 @@ export class DeviceRepository {
               }
             }
           }
+        },
+        apps: {
+          select: {
+            app: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          }
         }
       }
     })

@@ -1,0 +1,9 @@
+model AppDevice {
+  id       Int    @id @default(autoincrement())
+  app      App    @relation(fields: [appId], references: [id])
+  appId    Int
+  device   device @relation(fields: [deviceId], references: [id])
+  deviceId Int
+
+  @@unique([deviceId, appId])
+}
