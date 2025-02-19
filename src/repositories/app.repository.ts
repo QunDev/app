@@ -29,6 +29,7 @@ export class AppRepository {
         id: true,
         name: true,
         filepath: true,
+        updated: true,
         createdAt: true,
         updatedAt: true,
         userId: true

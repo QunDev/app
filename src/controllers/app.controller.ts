@@ -110,7 +110,7 @@ export class AppController {
       throw new BadRequest('App not found')
     }
 
-    const {name} = updateAppSchema.parse(req.body)
+    const {name, updated} = updateAppSchema.parse(req.body)
 
     const file = req.raw?.files?.file
 
@@ -159,6 +159,7 @@ export class AppController {
     }
     const updatedApp = await appService.updateApp(id, {
       name: name ? name : app.name,
+      updated: updated ? updated : app.updated,
       userId: req.user.userId ? req.user.userId : app.userId,
       filepath: filepath ? filepath : app.filepath
     })
