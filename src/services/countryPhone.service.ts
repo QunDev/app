@@ -24,10 +24,10 @@ export class CountryPhoneService {
     const { country, numberCode } = data
 
     // Check if numberCode already exists
-    const existingCountryPhone = await this.countryPhoneRepository.getCountryPhoneByNumberCode(numberCode)
-    if (existingCountryPhone) {
-      throw new ConflictError('Number code already in use')
-    }
+    // const existingCountryPhone = await this.countryPhoneRepository.getCountryPhoneByNumberCode(numberCode)
+    // if (existingCountryPhone) {
+    //   throw new ConflictError('Number code already in use')
+    // }
 
     // Create the country phone
     const newCountryPhone = await this.countryPhoneRepository.createCountryPhone(data)
