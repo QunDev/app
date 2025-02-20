@@ -58,10 +58,33 @@ export class DeviceController {
 
   async updateIsActiveDevice(req: Request, res: Response) {
     const {deviceId} = req.params;
+    const is_active = req.query.is_active === 'true';
     if (!deviceId) throw new UnprocessableEntity('Device ID is required');
-    const device = await deviceService.updateIsActiveDevice(deviceId);
+    const device = await deviceService.updateIsActiveDevice(deviceId, is_active);
     new OK({
-      message: 'Device updated successfully',
+      message: 'Done',
+      metadata: device
+    }).send(res);
+  }
+
+  async updateIsUpdateDevice(req: Request, res: Response) {
+    const {deviceId} = req.params;
+    const is_update = req.query.is_update === 'true';
+    if (!deviceId) throw new UnprocessableEntity('Device ID is required');
+    const device = await deviceService.updateIsUpdateDevice(deviceId, is_update);
+    new OK({
+      message: 'Done',
+      metadata: device
+    }).send(res);
+  }
+
+  async updateIsStartDevice(req: Request, res: Response) {
+    const {deviceId} = req.params;
+    const is_start = req.query.is_start === 'true';
+    if (!deviceId) throw new UnprocessableEntity('Device ID is required');
+    const device = await deviceService.updateIsStartDevice(deviceId, is_start);
+    new OK({
+      message: 'Done',
       metadata: device
     }).send(res);
   }

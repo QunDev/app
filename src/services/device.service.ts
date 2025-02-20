@@ -24,7 +24,15 @@ export class DeviceService {
     return this.deviceRepository.updateDevice(deviceId, data)
   }
 
-  async updateIsActiveDevice(deviceId: string) {
-    return this.deviceRepository.updateIsActiveDevice(deviceId)
+  async updateIsActiveDevice(deviceId: string, is_active: boolean) {
+    return this.deviceRepository.updateIsActiveDevice(deviceId, is_active)
+  }
+
+  async updateIsUpdateDevice(deviceId: string, is_update: boolean) {
+    return this.deviceRepository.updateIsUpdateDevice(deviceId, is_update)
+  }
+
+  async updateIsStartDevice(deviceId: string, is_start: boolean) {
+    return this.deviceRepository.updateIsStartDevice(deviceId, is_start)
   }
 }

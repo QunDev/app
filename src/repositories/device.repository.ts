@@ -47,10 +47,15 @@ export class DeviceRepository {
     return this.prisma.device.update({where: {deviceId}, data})
   }
 
-  async updateIsActiveDevice(deviceId
-                             :
-                             string
-  ) {
-    return this.prisma.device.update({where: {deviceId}, data: {is_active: true}})
+  async updateIsActiveDevice(deviceId: string, is_active: boolean) {
+    return this.prisma.device.update({where: {deviceId}, data: {is_active}})
+  }
+
+  async updateIsUpdateDevice(deviceId: string, is_update: boolean) {
+    return this.prisma.device.update({where: {deviceId}, data: {is_update}})
+  }
+
+  async updateIsStartDevice(deviceId: string, is_start: boolean) {
+    return this.prisma.device.update({where: {deviceId}, data: {is_start}})
   }
 }
