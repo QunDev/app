@@ -24,7 +24,17 @@ export class AppRepository {
 
   async getApp(id: number) {
     return this.prisma.app.findUnique({
-      where: {id}})
+      where: {id},
+      select: {
+        id: true,
+        name: true,
+        filepath: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+        userId: true
+      }
+    })
   }
 
   async getAppByName(name: string) {
