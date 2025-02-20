@@ -2,7 +2,7 @@ model App {
   id       Int     @id @default(autoincrement())
   name     String  @unique
   filepath String?
-  updated  Boolean @default(false)
+  updated  String @default("false")
   userId   Int
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
