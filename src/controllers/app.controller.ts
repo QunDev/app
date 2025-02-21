@@ -223,4 +223,24 @@ export class AppController {
 
     // res.download(app.filepath)
   }
+
+  async updateAppVersion(req: Request, res: Response) {
+    const id = parseInt(req.params.id)
+    if (isNaN(Number(id))) throw new BadRequest('Id must be a number')
+
+    const version = req.query.version
+
+    if (!version) {
+      throw new BadRequest('Version is required')
+    }
+
+    const app = await appService.updateAppVersion(id, version.toString())
+
+    new OK(
+      {
+        message: 'App version updated',
+        metadata: app
+      }
+    ).send(res)
+  }
 }

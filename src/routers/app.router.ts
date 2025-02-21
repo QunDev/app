@@ -8,6 +8,7 @@ const router = express.Router()
 
 router.get('/', asyncHandler(appController.getApps))
 router.get('/download/:id', asyncHandler(appController.downloadApp))
+router.get('/updateversion/:id', asyncHandler(appController.updateAppVersion))
 router.get('/:id', asyncHandler(appController.getApp))
 router.post('/', asyncHandler(appController.createApp))
 router.put('/:id', asyncHandler(appController.updateApp))

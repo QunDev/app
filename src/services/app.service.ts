@@ -31,4 +31,8 @@ export class AppService {
   async deleteApp(id: number) {
     return this.appRepository.removeApp(id)
   }
+
+  async updateAppVersion(id: number, version: string) {
+    return this.appRepository.updateAppVersion(id, version)
+  }
 }

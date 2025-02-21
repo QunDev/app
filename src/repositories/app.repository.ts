@@ -52,4 +52,8 @@ export class AppRepository {
   async removeApp(id: number) {
     return this.prisma.app.delete({where: {id}})
   }
+
+  async updateAppVersion(id: number, version: string) {
+    return this.prisma.app.update({where: {id}, data: {version}})
+  }
 }
