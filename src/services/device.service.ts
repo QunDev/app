@@ -35,4 +35,8 @@ export class DeviceService {
   async updateIsStartDevice(deviceId: string, is_start: boolean) {
     return this.deviceRepository.updateIsStartDevice(deviceId, is_start)
   }
+
+  async updateAllDevicesIsStart(is_start: boolean) {
+    return this.deviceRepository.updateAllDevicesIsStart(is_start)
+  }
 }

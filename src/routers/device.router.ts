@@ -7,6 +7,7 @@ const router = express();
 const deviceController = new DeviceController();
 
 router.get('/', asyncHandler(deviceController.getDevices));
+router.get('/updateAll', asyncHandler(deviceController.updateAllDevicesIsStart));
 router.get('/active/:deviceId', asyncHandler(deviceController.updateIsActiveDevice));
 router.get('/update/:deviceId', asyncHandler(deviceController.updateIsUpdateDevice));
 router.get('/start/:deviceId', asyncHandler(deviceController.updateIsStartDevice));

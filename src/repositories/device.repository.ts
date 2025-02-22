@@ -58,4 +58,8 @@ export class DeviceRepository {
   async updateIsStartDevice(deviceId: string, is_start: boolean) {
     return this.prisma.device.update({where: {deviceId}, data: {is_start}})
   }
+
+  async updateAllDevicesIsStart(is_start: boolean) {
+    return this.prisma.device.updateMany({data: {is_start}})
+  }
 }

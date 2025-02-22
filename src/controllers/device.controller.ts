@@ -88,4 +88,13 @@ export class DeviceController {
       metadata: device
     }).send(res);
   }
+
+  async updateAllDevicesIsStart(req: Request, res: Response) {
+    const is_start = req.query.is_start === 'true';
+    const devices = await deviceService.updateAllDevicesIsStart(is_start);
+    new OK({
+      message: 'Done',
+      metadata: devices
+    }).send(res);
+  }
 }
