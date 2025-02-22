@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import {randomString} from "~/utils";
 
 export class EmailRepository {
   private prisma: PrismaClient
@@ -46,6 +47,8 @@ export class EmailRepository {
       });
 
       if (!email) return email; // Không có email nào phù hợp
+
+      email.email = email.email.replace("@icloud", "+" + randomString(7) + "@icloud");
 
       // Kiểm tra xem email này có tồn tại trong bảng accountApp hay không
       const existingAccount = await this.prisma.accountApp.findFirst({

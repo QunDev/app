@@ -11,6 +11,7 @@ import {validateFileTypeAndSize} from "~/utils/file.utils.ts";
 import {v4 as uuidv4} from "uuid";
 import {fileProcessing} from "~/helper/fileProcessingQueue.helper.ts";
 import {rimraf} from "rimraf";
+import { access } from 'fs/promises';
 
 const prismaService = new PrismaService()
 const appRepository = new AppRepository(prismaService)
@@ -206,15 +207,19 @@ export class AppController {
 
     const app = await appService.getApp(id)
 
-    if (!app) {
-      throw new BadRequest('App not found')
-    }
+    if (!app) throw new BadRequest('App not found');
+    if (!app.filepath) throw new BadRequest('File not found');
 
-    if (!app.filepath) {
-      throw new BadRequest('File not found')
-    }
+    await access(app.filepath).catch(() => {
+      throw new BadRequest('File does not exist');
+    });
 
     const fileStream = createReadStream(app.filepath)
+
+    fileStream.on('error', (err) => {
+      console.error('File stream error:', err);
+      throw new BadRequest('Error occurred while reading file');
+    });
 
     res.setHeader('Content-Disposition', `attachment; filename="${app.name}".apk`)
     res.setHeader('Content-Type', 'application/octet-stream')
