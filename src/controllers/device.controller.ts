@@ -27,7 +27,7 @@ export class DeviceController {
   async create(req: Request, res: Response) {
     const {deviceId} = createDeviceSchema.parse(req.body);
     const userId = req.user.userId;
-    const device = await deviceService.create({userId, deviceId});
+    const device = await deviceService.create({userId, deviceId, is_start: false});
     new CREATED({
       message: 'Device created successfully',
       metadata: device

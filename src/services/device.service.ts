@@ -12,7 +12,7 @@ export class DeviceService {
     return this.deviceRepository.getDevices()
   }
 
-  async create(data: Pick<device, 'userId' | 'deviceId'>) {
+  async create(data: Pick<device, 'userId' | 'deviceId' | 'is_start'>) {
     return this.deviceRepository.create(data)
   }
 

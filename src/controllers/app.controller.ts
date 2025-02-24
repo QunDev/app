@@ -32,9 +32,7 @@ export class AppController {
   async getApp(req: Request, res: Response) {
     const id = parseInt(req.params.id)
     if (isNaN(Number(id))) throw new BadRequest('Id must be a number')
-    console.log("cccc")
     const app = await appService.getApp(id)
-    console.log("aaaa")
     if (!app) {
       throw new BadRequest('App not found')
     }

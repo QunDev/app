@@ -11,7 +11,7 @@ export class DeviceRepository {
     return this.prisma.device.findMany();
   }
 
-  async create(data: Pick<device, 'userId' | 'deviceId'>) {
+  async create(data: Pick<device, 'userId' | 'deviceId' | 'is_start'>) {
     return this.prisma.device.create({data})
   }
 
