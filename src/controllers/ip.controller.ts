@@ -43,7 +43,8 @@ export class IpController {
   async checkIpUsage(req: Request, res: Response) {
     const ip = req.params.ip;
     const appId = req.params.appId;
-    const result = await ipService.checkIpUsage(ip, Number(appId));
+    const userId = req.user.userId;
+    const result = await ipService.checkIpUsage(ip, Number(appId), userId);
     new OK({ message: result.message, metadata: result }).send(res);
   }
 }

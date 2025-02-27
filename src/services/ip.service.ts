@@ -36,13 +36,13 @@ export class IpService {
     return this.ipRepository.deleteIp(id);
   }
 
-  async checkIpUsage(ip: string, appId: number) {
+  async checkIpUsage(ip: string, appId: number, userId: number) {
     if (!ip) throw new UnprocessableEntity("IP address is required");
 
     const ipData = await this.ipRepository.getIpByAddress(ip, appId);
 
     if (!ipData) {
-      await this.createIp({ ip, appId });
+      await this.createIp({ ip, appId, userId });
       return { status: "not_found", message: "IP does not exist" };
     }
 
