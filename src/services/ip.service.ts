@@ -41,6 +41,7 @@ export class IpService {
     const ipData = await this.ipRepository.getIpByAddress(ip, appId);
 
     if (!ipData) {
+      await this.ipRepository.createIp({ip, appId});
       return { status: "not_found", message: "IP does not exist" };
     }
 
