@@ -50,8 +50,16 @@ export class IpRepository {
   }
 
   async incrementIpCount(ip: string, appId: number) {
-    return this.prisma.ip.update({
+    const ipRecord = await this.prisma.ip.findFirst({
       where: { ip, appId },
+    });
+
+    if (!ipRecord) {
+      throw new Error('Không tìm thấy bản ghi IP');
+    }
+
+    return this.prisma.ip.update({
+      where: { id: ipRecord.id },
       data: {
         countUsed: {
           increment: 1,
